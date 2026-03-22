@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jasiowe Gierki</title>
+  <style>
+    /* ===== RESET I BAZA ===== */
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+    }
+
+    /* ===== TŁO — mroczne, z mgłą atmosferyczną ===== */
+    body {
+      background: #050508;
+      color: #fff;
+      font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      min-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      cursor: default;
+      user-select: none;
+    }
+
+    /* Mgła tła — wielowarstwowe radialne gradienty */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 40%, rgba(40,0,80,0.35) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 80% 60%, rgba(0,20,60,0.30) 0%, transparent 70%),
+        radial-gradient(ellipse 100% 80% at 50% 100%, rgba(10,0,20,0.8) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Siatka gwiazd — pseudo tło */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 45% 10%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 30%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 70%, rgba(255,255,255,0.25) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 15%, rgba(255,255,255,0.35) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 80%, rgba(255,255,255,0.2) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 45%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 65%, rgba(255,255,255,0.4) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ===== NAGŁÓWEK ===== */
+    #header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 48px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    #logo-area {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* Retro ikona gamepad — pulsująca */
+    #gamepad-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #1a0a2e 0%, #0d051a 100%);
+      border: 2px solid rgba(150,50,255,0.5);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 0 20px rgba(120,0,255,0.3), inset 0 0 10px rgba(80,0,200,0.15);
+      animation: iconPulse 3s ease-in-out infinite;
+      cursor: default;
+    }
+
+    @keyframes iconPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(120,0,255,0.3), inset 0 0 10px rgba(80,0,200,0.15); }
+      50% { box-shadow: 0 0 35px rgba(150,50,255,0.5), inset 0 0 15px rgba(100,0,220,0.25); }
+    }
+
+    #title-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #title-main {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      background: linear-gradient(90deg, #c084fc 0%, #818cf8 40%, #67e8f9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      filter: drop-shadow(0 0 8px rgba(192,132,252,0.4));
+    }
+
+    #title-sub {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* Instrukcja klawiszy — prawy górny róg */
+    #controls-hint {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .hint-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: rgba(255,255,255,0.35);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .hint-key {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 5px;
+      padding: 2px 7px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.6);
+      font-family: 'Courier New', monospace;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.4);
+    }
+
+    /* ===== ŚRODKOWA SEKCJA — galeria ===== */
+    #main-area {
+      position: relative;
+      z-index: 10;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px 0;
+      overflow: hidden;
+    }
+
+    /* Etykieta sekcji */
+    #section-label {
+      padding: 0 48px;
+      margin-bottom: 20px;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    }
+
+    /* Wrapper galerii — kontroluje overflow */
+    #gallery-wrapper {
+      position: relative;
+      overflow: hidden;
+      padding: 20px 0 30px;
+    }
+
+    /* Rozmyta krawędź lewa i prawa */
+    #gallery-wrapper::before,
+    #gallery-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 80px;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    #gallery-wrapper::before {
+      left: 0;
+      background: linear-gradient(90deg, #050508 0%, transparent 100%);
+    }
+
+    #gallery-wrapper::after {
+      right: 0;
+      background: linear-gradient(-90deg, #050508 0%, transparent 100%);
+    }
+
+    /* Galeria kafelków — przesuwa się poziomo z płynną animacją */
+    #gallery {
+      display: flex;
+      gap: 24px;
+      padding: 0 48px;
+      transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      will-change: transform;
+    }
+
+    /* ===== KAFELEK GRY ===== */
+    .game-card {
+      flex-shrink: 0;
+      width: 320px;
+      height: 220px;
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition:
+        transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow 0.35s ease;
+      border: 2px solid rgba(255,255,255,0.06);
+      /* Domyślny stan — przyciemniony */
+      filter: brightness(0.65) saturate(0.7);
+    }
+
+    /* Kafelek aktywny (wybrany) — świecący, skalowany, pulsujący */
+    .game-card.active {
+      transform: scale(1.05);
+      filter: brightness(1) saturate(1);
+      border-color: rgba(192,132,252,0.6);
+      box-shadow:
+        0 0 0 2px rgba(192,132,252,0.3),
+        0 0 30px rgba(192,132,252,0.4),
+        0 0 60px rgba(130,80,220,0.2),
+        0 20px 40px rgba(0,0,0,0.6);
+      animation: cardPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes cardPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 2px rgba(192,132,252,0.3),
+          0 0 30px rgba(192,132,252,0.4),
+          0 0 60px rgba(130,80,220,0.2),
+          0 20px 40px rgba(0,0,0,0.6);
+      }
+      50% {
+        box-shadow:
+          0 0 0 2px rgba(192,132,252,0.5),
+          0 0 45px rgba(192,132,252,0.55),
+          0 0 90px rgba(130,80,220,0.35),
+          0 20px 40px rgba(0,0,0,0.6);
+      }
+    }
+
+    /* Hover na nieaktywnych kafelkach */
+    .game-card:not(.active):hover {
+      filter: brightness(0.85) saturate(0.85);
+      transform: scale(1.02);
+    }
+
+    /* Cover art — canvas wypełnia kafelek */
+    .cover-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Nakładka na kafelek z informacjami */
+    .card-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      color: #fff;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+
+    .card-author {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .tag-rpg    { background: rgba(139,0,0,0.7);   color: #ff9999; border: 1px solid rgba(180,0,0,0.5); }
+    .tag-roguelk{ background: rgba(80,0,120,0.7);   color: #d4aaff; border: 1px solid rgba(120,0,180,0.5); }
+    .tag-ascii  { background: rgba(0,60,40,0.7);    color: #88ffcc; border: 1px solid rgba(0,120,80,0.5); }
+    .tag-soon   { background: rgba(30,30,30,0.7);   color: #666;    border: 1px solid rgba(80,80,80,0.3); }
+
+    /* Badge "GRAJ" / "WKRÓTCE" */
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 4px;
+    }
+
+    .badge-new  { background: rgba(0,180,80,0.9);  color: #fff; box-shadow: 0 0 12px rgba(0,200,100,0.4); }
+    .badge-soon { background: rgba(60,60,60,0.8);  color: #888; }
+
+    /* Placeholder kafelków "wkrótce" */
+    .game-card.placeholder {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .game-card.placeholder:hover {
+      filter: brightness(0.65) saturate(0.7);
+      transform: none;
+    }
+
+    /* ===== DOLNY PANEL INFORMACYJNY ===== */
+    #info-panel {
+      position: relative;
+      z-index: 10;
+      padding: 0 48px 24px;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    #game-description {
+      max-width: 700px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    #game-description.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #desc-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+
+    #desc-text {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.55);
+      max-width: 580px;
+      margin-bottom: 14px;
+    }
+
+    #desc-meta {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    #desc-author {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 1px;
+    }
+
+    /* Przycisk GRAJ */
+    #play-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 10px 28px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 15px rgba(124,58,237,0.4);
+    }
+
+    #play-btn:hover {
+      background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+      box-shadow: 0 6px 25px rgba(124,58,237,0.6);
+      transform: translateY(-1px);
+    }
+
+    #play-btn:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(124,58,237,0.4);
+    }
+
+    /* ===== WSKAŹNIK NAWIGACJI (doty) ===== */
+    #nav-dots {
+      position: absolute;
+      bottom: 110px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10;
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-dot.active {
+      background: #c084fc;
+      width: 20px;
+      border-radius: 3px;
+      box-shadow: 0 0 8px rgba(192,132,252,0.6);
+    }
+
+    /* ===== STRZAŁKI NAWIGACJI ===== */
+    .nav-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 20;
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 18px;
+      color: rgba(255,255,255,0.5);
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-arrow:hover {
+      background: rgba(192,132,252,0.2);
+      border-color: rgba(192,132,252,0.4);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(192,132,252,0.3);
+    }
+
+    #arrow-left  { left: 10px; }
+    #arrow-right { right: 10px; }
+
+    .nav-arrow.hidden { opacity: 0; pointer-events: none; }
+
+    /* ===== FLASH POWIADOMIENIE ===== */
+    #flash-msg {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-60px);
+      background: rgba(192,132,252,0.15);
+      border: 1px solid rgba(192,132,252,0.4);
+      backdrop-filter: blur(8px);
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.85);
+      letter-spacing: 1px;
+      z-index: 100;
+      transition: transform 0.3s ease;
+      pointer-events: none;
+    }
+
+    #flash-msg.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== ANIMACJA WEJŚCIA ===== */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    #header     { animation: fadeInUp 0.6s ease 0.1s both; }
+    #main-area  { animation: fadeInUp 0.6s ease 0.25s both; }
+    #info-panel { animation: fadeInUp 0.6s ease 0.4s both; }
+
+    /* ===== RESPONSYWNOŚĆ ===== */
+    @media (max-width: 768px) {
+      #header { padding: 16px 20px 12px; }
+      #title-main { font-size: 20px; letter-spacing: 3px; }
+      #controls-hint { display: none; }
+      .game-card { width: 240px; height: 165px; }
+      #gallery { padding: 0 20px; gap: 16px; }
+      #info-panel { padding: 0 20px 20px; }
+      #section-label { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAGŁÓWEK ===== -->
+<header id="header">
+  <div id="logo-area">
+    <div id="gamepad-icon">🎮</div>
+    <div id="title-text">
+      <span id="title-main">Jasiowe Gierki</span>
+      <span id="title-sub">kolekcja gier &nbsp;·&nbsp; tinyberserker</span>
+    </div>
+  </div>
+
+  <!-- Instrukcja klawiszy w prawym górnym rogu -->
+  <div id="controls-hint">
+    <div class="hint-item">
+      <span class="hint-key">A</span>
+      <span class="hint-key">D</span>
+      <span>nawigacja</span>
+    </div>
+    <div class="hint-item">
+      <span class="hint-key">←</span>
+      <span class="hint-key">→</span>
+      <span>nawigacja</span>
+    </div>
+    <div class="hint-item">
+      <span class="hint-key">Enter</span>
+      <span>graj</span>
+    </div>
+  </div>
+</header>
+
+<!-- Flash komunikat -->
+<div id="flash-msg"></div>
+
+<!-- ===== SEKCJA GALERII ===== -->
+<main id="main-area">
+  <div id="section-label">Biblioteka gier</div>
+
+  <!-- Wrapper galerii -->
+  <div id="gallery-wrapper" style="position:relative;">
+
+    <!-- Strzałki nawigacji -->
+    <div class="nav-arrow hidden" id="arrow-left" onclick="navigate(-1)">&#8249;</div>
+    <div class="nav-arrow" id="arrow-right" onclick="navigate(1)">&#8250;</div>
+
+    <!-- Galeria kafelków -->
+    <div id="gallery">
+
+      <!-- ===== KAFELEK 1: DUNGEON CRAWLER ===== -->
+      <div class="game-card active" id="card-0" onclick="enterGame(0)">
+        <canvas class="cover-canvas" id="cover-0" width="320" height="220"></canvas>
+        <div class="card-badge badge-new">Graj</div>
+        <div class="card-overlay">
+          <div class="card-title">Dungeon Crawler</div>
+          <div class="card-author">przez Jasia</div>
+          <div class="card-tags">
+            <span class="tag tag-rpg">RPG</span>
+            <span class="tag tag-roguelk">Roguelike</span>
+            <span class="tag tag-ascii">ASCII</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== KAFELEK 2: PLACEHOLDER ===== -->
+      <div class="game-card placeholder" id="card-1" onclick="enterGame(1)">
+        <canvas class="cover-canvas" id="cover-1" width="320" height="220"></canvas>
+        <div class="card-badge badge-soon">Wkrótce</div>
+        <div class="card-overlay">
+          <div class="card-title">??? Nieznana Gra</div>
+          <div class="card-author">przez Jasia</div>
+          <div class="card-tags">
+            <span class="tag tag-soon">W planach</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== KAFELEK 3: PLACEHOLDER ===== -->
+      <div class="game-card placeholder" id="card-2" onclick="enterGame(2)">
+        <canvas class="cover-canvas" id="cover-2" width="320" height="220"></canvas>
+        <div class="card-badge badge-soon">Wkrótce</div>
+        <div class="card-overlay">
+          <div class="card-title">??? Projekt X</div>
+          <div class="card-author">przez Jasia</div>
+          <div class="card-tags">
+            <span class="tag tag-soon">W planach</span>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /gallery -->
+  </div><!-- /gallery-wrapper -->
+
+  <!-- Doty nawigacji -->
+  <div id="nav-dots">
+    <div class="nav-dot active" onclick="selectCard(0)"></div>
+    <div class="nav-dot" onclick="selectCard(1)"></div>
+    <div class="nav-dot" onclick="selectCard(2)"></div>
+  </div>
+
+</main>
+
+<!-- ===== DOLNY PANEL Z OPISEM AKTYWNEJ GRY ===== -->
+<div id="info-panel">
+  <div id="game-description">
+    <div id="desc-title">Dungeon Crawler</div>
+    <div id="desc-text">Mroczna roguelike RPG — eksploruj lochy, bij potwory, zdobywaj złoto. 6 pięter, 6 bossów, sklep i zdolności pasywne!</div>
+    <div id="desc-meta">
+      <span id="desc-author">Autor: Jaś &nbsp;·&nbsp; 2025</span>
+      <a id="play-btn" href="#" onclick="enterGame(0); return false;">
+        ▶ &nbsp;Graj teraz
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===================== DANE GIER =====================
+const GAMES = [
+  {
+    id: 0,
+    title: 'Dungeon Crawler',
+    author: 'Jaś',
+    year: '2025',
+    description: 'Mroczna roguelike RPG — eksploruj lochy, bij potwory, zdobywaj złoto. 6 pięter, 6 bossów, sklep i zdolności pasywne!',
+    url: 'dungeon-crawler/index.html',
+    available: true,
+    glowColor: 'rgba(180,0,0,0.5)',
+    coverStyle: 'dungeon',
+  },
+  {
+    id: 1,
+    title: '??? Nieznana Gra',
+    author: 'Jaś',
+    year: '???',
+    description: 'Tajemniczy projekt w fazie planowania... wróć tutaj wkrótce.',
+    url: null,
+    available: false,
+    glowColor: 'rgba(50,50,80,0.3)',
+    coverStyle: 'mystery',
+  },
+  {
+    id: 2,
+    title: '??? Projekt X',
+    author: 'Jaś',
+    year: '???',
+    description: 'Coś nowego jest w drodze. Bądź na bieżąco!',
+    url: null,
+    available: false,
+    glowColor: 'rgba(30,30,60,0.3)',
+    coverStyle: 'mystery2',
+  },
+];
+
+// Aktualnie wybrany indeks
+let currentIndex = 0;
+let isAnimating = false;
+
+// ===================== WEB AUDIO — DŹWIĘKI =====================
+// Tworzymy AudioContext na żądanie (po pierwszej interakcji użytkownika)
+let audioCtx = null;
+
+function ensureAudio() {
+  if (!audioCtx) {
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    } catch(e) {}
+  }
+}
+
+// Krótki elektroniczny beep — dźwięk nawigacji między kafelkami
+function playNavSound() {
+  ensureAudio();
+  if (!audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(220, audioCtx.currentTime + 0.08);
+    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + 0.1);
+  } catch(e) {}
+}
+
+// Dźwięk "wejścia do gry" — narastające tony
+function playSelectSound() {
+  ensureAudio();
+  if (!audioCtx) return;
+  try {
+    const osc1 = audioCtx.createOscillator();
+    const gain1 = audioCtx.createGain();
+    osc1.connect(gain1); gain1.connect(audioCtx.destination);
+    osc1.type = 'square';
+    osc1.frequency.setValueAtTime(330, audioCtx.currentTime);
+    osc1.frequency.setValueAtTime(440, audioCtx.currentTime + 0.08);
+    osc1.frequency.setValueAtTime(660, audioCtx.currentTime + 0.16);
+    gain1.gain.setValueAtTime(0.12, audioCtx.currentTime);
+    gain1.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    osc1.start(audioCtx.currentTime);
+    osc1.stop(audioCtx.currentTime + 0.3);
+  } catch(e) {}
+}
+
+// ===================== NAWIGACJA =====================
+// dir = -1 (lewo) lub +1 (prawo)
+function navigate(dir) {
+  if (isAnimating) return;
+  const newIndex = currentIndex + dir;
+  if (newIndex < 0 || newIndex >= GAMES.length) return;
+  playNavSound();
+  selectCard(newIndex);
+}
+
+function selectCard(index) {
+  if (index < 0 || index >= GAMES.length) return;
+  // Zdejmij klasę active z poprzedniego kafelka
+  const prevCard = document.getElementById('card-' + currentIndex);
+  if (prevCard) prevCard.classList.remove('active');
+  currentIndex = index;
+  // Ustaw aktywny kafelek
+  const card = document.getElementById('card-' + index);
+  if (card) card.classList.add('active');
+  updateGalleryTransform();
+  updateInfoPanel();
+  updateDots();
+  updateArrows();
+}
+
+// Przesuń galerię tak, żeby aktywny kafelek był wycentrowany
+function updateGalleryTransform() {
+  const gallery = document.getElementById('gallery');
+  const cardWidth = 320;
+  const gap = 24;
+  const paddingLeft = 48;
+  const windowWidth = window.innerWidth;
+  const cardCenter = paddingLeft + currentIndex * (cardWidth + gap) + cardWidth / 2;
+  const offset = windowWidth / 2 - cardCenter;
+  gallery.style.transform = 'translateX(' + offset + 'px)';
+}
+
+// Zaktualizuj dolny panel z opisem wybranej gry
+function updateInfoPanel() {
+  const game = GAMES[currentIndex];
+  const desc = document.getElementById('game-description');
+  const titleEl = document.getElementById('desc-title');
+  const textEl = document.getElementById('desc-text');
+  const authorEl = document.getElementById('desc-author');
+  const playBtn = document.getElementById('play-btn');
+  // Animacja — chowamy i pokazujemy opis
+  desc.classList.remove('visible');
+  setTimeout(function() {
+    titleEl.textContent = game.title;
+    textEl.textContent = game.description;
+    authorEl.textContent = 'Autor: ' + game.author + ' · ' + game.year;
+    if (game.available && game.url) {
+      playBtn.style.display = 'inline-flex';
+      playBtn.href = game.url;
+    } else {
+      playBtn.style.display = 'none';
+    }
+    desc.classList.add('visible');
+  }, 180);
+}
+
+// Zaktualizuj doty nawigacji
+function updateDots() {
+  document.querySelectorAll('.nav-dot').forEach(function(dot, i) {
+    dot.classList.toggle('active', i === currentIndex);
+  });
+}
+
+// Zaktualizuj widoczność strzałek
+function updateArrows() {
+  document.getElementById('arrow-left').classList.toggle('hidden', currentIndex === 0);
+  document.getElementById('arrow-right').classList.toggle('hidden', currentIndex === GAMES.length - 1);
+}
+
+// Wejście do wybranej gry
+function enterGame(index) {
+  const game = GAMES[index];
+  if (!game.available) {
+    showFlash('Ta gra jest jeszcze w przygotowaniu...');
+    return;
+  }
+  playSelectSound();
+  showFlash('Ładowanie ' + game.title + '...');
+  setTimeout(function() {
+    window.location.href = game.url;
+  }, 400);
+}
+
+// Flash komunikat na górze ekranu
+function showFlash(msg) {
+  const el = document.getElementById('flash-msg');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(el._timer);
+  el._timer = setTimeout(function() { el.classList.remove('show'); }, 2200);
+}
+
+// ===================== KLAWIATURA — nawigacja =====================
+// A/D lub strzałki lewo/prawo = przewijanie kafelków
+// Enter / Spacja = wejście do wybranej gry
+document.addEventListener('keydown', function(e) {
+  switch(e.key) {
+    case 'ArrowLeft':
+    case 'a':
+    case 'A':
+      e.preventDefault();
+      navigate(-1);
+      break;
+    case 'ArrowRight':
+    case 'd':
+    case 'D':
+      e.preventDefault();
+      navigate(1);
+      break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      enterGame(currentIndex);
+      break;
+  }
+});
+
+// ===================== RYSOWANIE COVER ART =====================
+
+// --- Cover art Dungeon Crawler: animowany labirynt ASCII ze świecącymi elementami ---
+function drawDungeonCover(canvas) {
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width;
+  var H = canvas.height;
+  var t = Date.now() / 1000;
+
+  // Czarne tło z fioletowym odcieniem
+  ctx.fillStyle = '#05000d';
+  ctx.fillRect(0, 0, W, H);
+
+  // Rozmyta czerwona poświata w centrum (klimat lochu)
+  var glow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.65);
+  glow.addColorStop(0, 'rgba(120,0,0,' + (0.35 + 0.1 * Math.sin(t * 1.2)) + ')');
+  glow.addColorStop(0.4, 'rgba(60,0,20,0.2)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, W, H);
+
+  // Rysuj ASCII labirynt jako siatkę znaków
+  var CELL = 16;
+  var COLS_G = Math.floor(W / CELL) + 1;
+  var ROWS_G = Math.floor(H / CELL) + 1;
+
+  ctx.font = (CELL - 2) + 'px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  for (var row = 0; row < ROWS_G; row++) {
+    for (var col = 0; col < COLS_G; col++) {
+      var hash = (col * 73 + row * 37 + col * row * 5) % 100;
+      var cx = col * CELL + CELL / 2;
+      var cy = row * CELL + CELL / 2;
+
+      // Odległość od centrum — krawędzie są ciemniejsze
+      var dx = (cx - W/2) / (W/2);
+      var dy = (cy - H/2) / (H/2);
+      var dist = Math.sqrt(dx*dx + dy*dy);
+      var fadeAlpha = Math.max(0, 1 - dist * 1.1);
+
+      if (hash < 35) {
+        // Ściana — szary blok
+        var brightness = 20 + (hash % 15);
+        ctx.fillStyle = 'rgba(' + (brightness + 15) + ',' + brightness + ',' + (brightness + 5) + ',' + (fadeAlpha * 0.9) + ')';
+        var wallChars = ['\u2593', '\u2592', '\u2591', '\u2592'];
+        ctx.fillText(wallChars[hash % 4], cx, cy);
+      } else if (hash < 40) {
+        // Wróg — czerwony, animowany puls
+        var pulse = 0.5 + 0.5 * Math.sin(t * 2 + col * 0.5 + row * 0.3);
+        ctx.fillStyle = 'rgba(200,40,40,' + (fadeAlpha * (0.5 + pulse * 0.5)) + ')';
+        ctx.fillText(['g','s','t','B'][hash % 4], cx, cy);
+      } else if (hash < 43) {
+        // Złoto — pulsujące żółte $
+        var pulse2 = 0.5 + 0.5 * Math.sin(t * 3 + col + row);
+        ctx.fillStyle = 'rgba(220,180,0,' + (fadeAlpha * (0.4 + pulse2 * 0.4)) + ')';
+        ctx.fillText('$', cx, cy);
+      } else if (hash < 45) {
+        // Schody
+        ctx.fillStyle = 'rgba(180,180,255,' + (fadeAlpha * 0.6) + ')';
+        ctx.fillText('>', cx, cy);
+      } else {
+        // Podłoga
+        var floor = 15 + (hash % 12);
+        ctx.fillStyle = 'rgba(' + (floor + 5) + ',' + floor + ',' + (floor - 3) + ',' + (fadeAlpha * 0.6) + ')';
+        var floorChars = ['.', ' ', ' ', "'", ' '];
+        ctx.fillText(floorChars[hash % 5], cx, cy);
+      }
+    }
+  }
+
+  // Bohater — pulsujący zielony @ w centrum
+  var heroX = W / 2;
+  var heroY = H / 2 + 10;
+  var heroPulse = 0.7 + 0.3 * Math.sin(t * 2.5);
+
+  // Poświata bohatera
+  var heroGlow = ctx.createRadialGradient(heroX, heroY, 0, heroX, heroY, 30);
+  heroGlow.addColorStop(0, 'rgba(0,255,100,' + (0.3 * heroPulse) + ')');
+  heroGlow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = heroGlow;
+  ctx.fillRect(heroX - 35, heroY - 35, 70, 70);
+
+  // Sam bohater @ — jasny zielony
+  ctx.font = 'bold 22px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(0,255,100,' + heroPulse + ')';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('@', heroX, heroY);
+
+  // Tytuł na górze kafelka (subtelny)
+  ctx.font = 'bold 11px "Courier New", monospace';
+  ctx.fillStyle = 'rgba(180,0,0,0.7)';
+  ctx.textAlign = 'center';
+  ctx.fillText('\u2550\u2550\u2550 DUNGEON CRAWLER \u2550\u2550\u2550', W / 2, 14);
+
+  // Gradient na dole — fade do czarnego (przejście do overlay)
+  var bottomFade = ctx.createLinearGradient(0, H * 0.55, 0, H);
+  bottomFade.addColorStop(0, 'rgba(5,0,13,0)');
+  bottomFade.addColorStop(1, 'rgba(5,0,13,0.95)');
+  ctx.fillStyle = bottomFade;
+  ctx.fillRect(0, H * 0.55, W, H * 0.45);
+}
+
+// --- Cover art dla placeholderów — mglisty, tajemniczy ---
+function drawMysteryCover(canvas, variant) {
+  var ctx = canvas.getContext('2d');
+  var W = canvas.width;
+  var H = canvas.height;
+  var t = Date.now() / 1000;
+
+  // Ciemne tło
+  ctx.fillStyle = '#050508';
+  ctx.fillRect(0, 0, W, H);
+
+  // Mglisty kolorowy gradient — różny dla każdego placeholdera
+  var g = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W * 0.7);
+  if (variant === 1) {
+    g.addColorStop(0, 'rgba(0,30,80,0.3)');
+  } else {
+    g.addColorStop(0, 'rgba(0,60,30,0.25)');
+  }
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.fillRect(0, 0, W, H);
+
+  // Znak zapytania w centrum — bardzo subtelny
+  var pulse = 0.5 + 0.5 * Math.sin(t * 1.5);
+  ctx.font = 'bold 72px "Courier New", monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = 'rgba(80,80,100,' + (0.15 + pulse * 0.1) + ')';
+  ctx.fillText('?', W / 2, H / 2 - 10);
+
+  // Gradient na dole
+  var bottomFade = ctx.createLinearGradient(0, H * 0.5, 0, H);
+  bottomFade.addColorStop(0, 'rgba(5,5,8,0)');
+  bottomFade.addColorStop(1, 'rgba(5,5,8,0.95)');
+  ctx.fillStyle = bottomFade;
+  ctx.fillRect(0, H * 0.5, W, H * 0.5);
+}
+
+// ===================== PĘTLA ANIMACJI =====================
+// requestAnimationFrame — rysuje cover art co klatkę
+function renderFrame() {
+  var c0 = document.getElementById('cover-0');
+  if (c0) drawDungeonCover(c0);
+  var c1 = document.getElementById('cover-1');
+  if (c1) drawMysteryCover(c1, 1);
+  var c2 = document.getElementById('cover-2');
+  if (c2) drawMysteryCover(c2, 2);
+  requestAnimationFrame(renderFrame);
+}
+
+// ===================== INICJALIZACJA =====================
+function init() {
+  updateGalleryTransform();
+  updateInfoPanel();
+  updateDots();
+  updateArrows();
+  // Pokaż opis z małym opóźnieniem po załadowaniu
+  setTimeout(function() {
+    document.getElementById('game-description').classList.add('visible');
+  }, 600);
+  // Uruchom animację cover art
+  renderFrame();
+}
+
+// Odśwież pozycję galerii przy zmianie rozmiaru okna
+window.addEventListener('resize', function() { updateGalleryTransform(); });
+
+// Start
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

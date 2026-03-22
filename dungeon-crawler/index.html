@@ -8,75 +8,22 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     background: radial-gradient(ellipse at center, #110820 0%, #050008 100%);
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    font-family: 'Courier New', monospace;
-    gap: 0px;
+    display: flex; flex-direction: row; align-items: center; justify-content: center;
+    min-height: 100vh; font-family: 'Courier New', monospace; gap: 0px;
   }
-  #game-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transform: translateX(-80px);
-  }
-  canvas {
-    border: 2px solid #6b0000;
-    box-shadow: 0 0 40px #8B000099, 0 0 80px #3a000066, inset 0 0 20px #00000088;
-    display: block;
-    image-rendering: pixelated;
-  }
-  #floor-display {
-    color: #ffd700;
-    font-size: 13px;
-    font-family: 'Courier New', monospace;
-    letter-spacing: 2px;
-    margin-bottom: 5px;
-    text-align: center;
-  }
-  #info {
-    color: #555;
-    font-size: 12px;
-    margin-top: 8px;
-    letter-spacing: 1px;
-  }
-  .panel {
-    color: #ccc;
-    font-family: 'Courier New', monospace;
-    font-size: 12px;
-    width: 190px;
-    border: 2px solid #8B0000;
-    box-shadow: 0 0 15px #8B000055;
-    background: #0d0820;
-    padding: 12px;
-    align-self: flex-start;
-  }
-  .panel h3 {
-    color: #ffd700;
-    font-size: 12px;
-    text-align: center;
-    margin-bottom: 8px;
-    letter-spacing: 1px;
-    border-bottom: 1px solid #8B0000;
-    padding-bottom: 4px;
-  }
+  #game-wrap { display: flex; flex-direction: column; align-items: center; transform: translateX(-80px); }
+  canvas { border: 2px solid #6b0000; box-shadow: 0 0 40px #8B000099, 0 0 80px #3a000066, inset 0 0 20px #00000088; display: block; image-rendering: pixelated; }
+  #floor-display { color: #ffd700; font-size: 13px; font-family: 'Courier New', monospace; letter-spacing: 2px; margin-bottom: 5px; text-align: center; }
+  #info { color: #555; font-size: 12px; margin-top: 8px; letter-spacing: 1px; }
+  .panel { color: #ccc; font-family: 'Courier New', monospace; font-size: 12px; width: 190px; border: 2px solid #8B0000; box-shadow: 0 0 15px #8B000055; background: #0d0820; padding: 12px; align-self: flex-start; }
+  .panel h3 { color: #ffd700; font-size: 12px; text-align: center; margin-bottom: 8px; letter-spacing: 1px; border-bottom: 1px solid #8B0000; padding-bottom: 4px; }
   .panel .section { margin-bottom: 12px; }
   .panel .enemy { margin: 4px 0; line-height: 1.5; }
   .panel .enemy-name { color: #ff4444; font-weight: bold; }
   .panel .boss-name { color: #ff2222; font-weight: bold; }
   .panel .stat { color: #888; font-size: 11px; }
   .panel .key { display: flex; justify-content: space-between; margin: 3px 0; }
-  .panel .key kbd {
-    background: #1a1a2e;
-    border: 1px solid #555;
-    color: #ffd700;
-    padding: 1px 5px;
-    border-radius: 3px;
-    font-family: 'Courier New', monospace;
-    font-size: 11px;
-  }
+  .panel .key kbd { background: #1a1a2e; border: 1px solid #555; color: #ffd700; padding: 1px 5px; border-radius: 3px; font-family: 'Courier New', monospace; font-size: 11px; }
   .panel .key span { color: #aaa; font-size: 11px; text-align: right; }
   #panel-right, #panel-left { align-self: center; }
   #panel-left { margin-right: auto; margin-left: 100px; }
@@ -92,37 +39,15 @@
   .boss-defeated .boss-name::after { content: ' ✓'; color: #44ff44; }
   .boss-defeated { opacity: 0.6; }
   #stats-kills { color: #ff8844; }
-  #touch-controls {
-    display: none; flex-direction: column; align-items: center;
-    justify-content: center; gap: 3px; align-self: center; margin-right: 8px;
-  }
+  #touch-controls { display: none; flex-direction: column; align-items: center; justify-content: center; gap: 3px; align-self: center; margin-right: 8px; }
   #dpad { display: flex; flex-direction: column; align-items: center; gap: 3px; }
   #dpad-mid { display: flex; gap: 3px; align-items: center; }
-  .dpad-btn {
-    width: 44px; height: 44px;
-    background: rgba(30,10,50,0.92);
-    border: 2px solid #5a2a8a;
-    border-radius: 8px;
-    color: #ffd700; font-size: 18px; cursor: pointer;
-    user-select: none; -webkit-user-select: none; touch-action: manipulation;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.08s, border-color 0.08s; flex-shrink: 0;
-  }
+  .dpad-btn { width: 44px; height: 44px; background: rgba(30,10,50,0.92); border: 2px solid #5a2a8a; border-radius: 8px; color: #ffd700; font-size: 18px; cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; display: flex; align-items: center; justify-content: center; transition: background 0.08s, border-color 0.08s; flex-shrink: 0; }
   .dpad-btn:active, .dpad-btn.pressed { background: rgba(100,40,160,0.95); border-color: #ffd700; }
-  #btn-potion {
-    background: rgba(0,40,70,0.92); border-color: #0088cc; color: #00ffff;
-    font-size: 11px; font-family: 'Courier New', monospace; font-weight: bold;
-  }
+  #btn-potion { background: rgba(0,40,70,0.92); border-color: #0088cc; color: #00ffff; font-size: 11px; font-family: 'Courier New', monospace; font-weight: bold; }
   #btn-potion:active, #btn-potion.pressed { background: rgba(0,100,160,0.95); border-color: #00ffff; }
   #touch-shop-btns { display: none; gap: 6px; margin-top: 6px; justify-content: center; }
-  .shop-btn {
-    width: 52px; height: 44px; background: rgba(20,10,40,0.92);
-    border: 2px solid #5a2a8a; border-radius: 8px; color: #ffd700;
-    font-size: 12px; font-family: 'Courier New', monospace; font-weight: bold;
-    cursor: pointer; user-select: none; touch-action: manipulation;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center; line-height: 1.2; flex-shrink: 0;
-  }
+  .shop-btn { width: 52px; height: 44px; background: rgba(20,10,40,0.92); border: 2px solid #5a2a8a; border-radius: 8px; color: #ffd700; font-size: 12px; font-family: 'Courier New', monospace; font-weight: bold; cursor: pointer; user-select: none; touch-action: manipulation; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.2; flex-shrink: 0; }
   .shop-btn:active, .shop-btn.pressed { background: rgba(80,40,120,0.95); border-color: #ffd700; }
   #btn-shop-q { border-color: #cc4444; color: #ff8888; }
   #btn-shop-q:active { border-color: #ff8888; }
@@ -200,7 +125,9 @@
     <div class="key"><canvas class="leg-canvas" id="leg-potion"></canvas><span data-i18n="leg_potion">mikstura</span></div>
   </div>
 </div>
-<script src="game1.js"></script>
-<script src="game2.js"></script>
+<script src="gc1.js"></script>
+<script src="gc2.js"></script>
+<script src="gc3.js"></script>
+<script src="gc4.js"></script>
 </body>
 </html>

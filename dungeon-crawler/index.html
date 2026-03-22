@@ -1,1 +1,205 @@
-PLACEHOLDER_WILL_BE_REPLACED
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dungeon Crawler</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: radial-gradient(ellipse at center, #110820 0%, #050008 100%);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    gap: 0px;
+  }
+  #game-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateX(-80px);
+  }
+  canvas {
+    border: 2px solid #6b0000;
+    box-shadow: 0 0 40px #8B000099, 0 0 80px #3a000066, inset 0 0 20px #00000088;
+    display: block;
+    image-rendering: pixelated;
+  }
+  #floor-display {
+    color: #ffd700;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 2px;
+    margin-bottom: 5px;
+    text-align: center;
+  }
+  #info {
+    color: #555;
+    font-size: 12px;
+    margin-top: 8px;
+    letter-spacing: 1px;
+  }
+  .panel {
+    color: #ccc;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    width: 190px;
+    border: 2px solid #8B0000;
+    box-shadow: 0 0 15px #8B000055;
+    background: #0d0820;
+    padding: 12px;
+    align-self: flex-start;
+  }
+  .panel h3 {
+    color: #ffd700;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #8B0000;
+    padding-bottom: 4px;
+  }
+  .panel .section { margin-bottom: 12px; }
+  .panel .enemy { margin: 4px 0; line-height: 1.5; }
+  .panel .enemy-name { color: #ff4444; font-weight: bold; }
+  .panel .boss-name { color: #ff2222; font-weight: bold; }
+  .panel .stat { color: #888; font-size: 11px; }
+  .panel .key { display: flex; justify-content: space-between; margin: 3px 0; }
+  .panel .key kbd {
+    background: #1a1a2e;
+    border: 1px solid #555;
+    color: #ffd700;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+  }
+  .panel .key span { color: #aaa; font-size: 11px; text-align: right; }
+  #panel-right, #panel-left { align-self: center; }
+  #panel-left { margin-right: auto; margin-left: 100px; }
+  #panel-right { transform: translateX(-60px); }
+  body.mode-keyboard #panel-left { margin-left: 0; margin-right: 16px; }
+  body.mode-keyboard #game-wrap { transform: translateX(0); }
+  body.mode-keyboard #panel-right { transform: translateX(0); margin-left: 16px; }
+  body.mode-touch #panel-left { margin-left: 0; margin-right: 10px; }
+  body.mode-touch #touch-controls { margin-left: 10px; margin-right: 10px; }
+  body.mode-touch #game-wrap { transform: translateX(0); }
+  body.mode-touch #panel-right { transform: translateX(0); margin-left: 4px; }
+  .leg-canvas { width: 20px; height: 20px; border: 1px solid #333; border-radius: 2px; flex-shrink: 0; }
+  .boss-defeated .boss-name::after { content: ' ✓'; color: #44ff44; }
+  .boss-defeated { opacity: 0.6; }
+  #stats-kills { color: #ff8844; }
+  #touch-controls {
+    display: none; flex-direction: column; align-items: center;
+    justify-content: center; gap: 3px; align-self: center; margin-right: 8px;
+  }
+  #dpad { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+  #dpad-mid { display: flex; gap: 3px; align-items: center; }
+  .dpad-btn {
+    width: 44px; height: 44px;
+    background: rgba(30,10,50,0.92);
+    border: 2px solid #5a2a8a;
+    border-radius: 8px;
+    color: #ffd700; font-size: 18px; cursor: pointer;
+    user-select: none; -webkit-user-select: none; touch-action: manipulation;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.08s, border-color 0.08s; flex-shrink: 0;
+  }
+  .dpad-btn:active, .dpad-btn.pressed { background: rgba(100,40,160,0.95); border-color: #ffd700; }
+  #btn-potion {
+    background: rgba(0,40,70,0.92); border-color: #0088cc; color: #00ffff;
+    font-size: 11px; font-family: 'Courier New', monospace; font-weight: bold;
+  }
+  #btn-potion:active, #btn-potion.pressed { background: rgba(0,100,160,0.95); border-color: #00ffff; }
+  #touch-shop-btns { display: none; gap: 6px; margin-top: 6px; justify-content: center; }
+  .shop-btn {
+    width: 52px; height: 44px; background: rgba(20,10,40,0.92);
+    border: 2px solid #5a2a8a; border-radius: 8px; color: #ffd700;
+    font-size: 12px; font-family: 'Courier New', monospace; font-weight: bold;
+    cursor: pointer; user-select: none; touch-action: manipulation;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; line-height: 1.2; flex-shrink: 0;
+  }
+  .shop-btn:active, .shop-btn.pressed { background: rgba(80,40,120,0.95); border-color: #ffd700; }
+  #btn-shop-q { border-color: #cc4444; color: #ff8888; }
+  #btn-shop-q:active { border-color: #ff8888; }
+  @media (pointer: coarse) {
+    body { flex-wrap: wrap; align-content: flex-start; padding: 8px; gap: 10px; justify-content: center; }
+    #panel-left, #panel-right { display: none; }
+    #touch-controls { order: 2; margin: 6px 0 0 0; }
+    #game-wrap { width: 100%; align-items: center; order: 1; }
+    canvas { max-width: 100%; height: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="panel" id="panel-left">
+  <h3 data-i18n="h_enemies">⚔ WROGOWIE</h3>
+  <div class="section">
+    <div class="enemy"><span class="enemy-name" data-i18n="enemy_goblin">g Goblin</span><br><span class="stat">HP:15  ATK:4  XP:10  💰5</span></div>
+    <div class="enemy"><span class="enemy-name" data-i18n="enemy_szkielet">s Szkielet</span><br><span class="stat">HP:20  ATK:6  XP:15  💰8</span></div>
+    <div class="enemy"><span class="enemy-name" data-i18n="enemy_troll">t Troll</span><br><span class="stat">HP:35  ATK:10 XP:25  💰15</span></div>
+  </div>
+  <h3 data-i18n="h_bosses">👑 BOSSOWIE</h3>
+  <div class="section">
+    <div class="enemy" id="boss-panel-1"><span class="boss-name" data-i18n="boss_smok">B Smok</span> <span class="stat" data-i18n-floor="1">(p.1)</span><br><span class="stat">HP:60  ATK:15 XP:50  💰40</span></div>
+    <div class="enemy" id="boss-panel-2"><span class="boss-name" data-i18n="boss_demon">B Demon</span> <span class="stat" data-i18n-floor="2">(p.2)</span><br><span class="stat">HP:80  ATK:20 XP:75  💰60</span></div>
+    <div class="enemy" id="boss-panel-3"><span class="boss-name" data-i18n="boss_lich">B Lich</span> <span class="stat" data-i18n-floor="3">(p.3)</span><br><span class="stat">HP:120 ATK:25 XP:100 💰100</span></div>
+    <div class="enemy" id="boss-panel-4"><span class="boss-name" data-i18n="boss_wampir">B Wampir</span> <span class="stat" data-i18n-floor="4">(p.4)</span><br><span class="stat">HP:160 ATK:30 XP:130 💰130</span></div>
+    <div class="enemy" id="boss-panel-5"><span class="boss-name" data-i18n="boss_golem">B Golem</span> <span class="stat" data-i18n-floor="5">(p.5)</span><br><span class="stat">HP:200 ATK:35 XP:160 💰160</span></div>
+    <div class="enemy" id="boss-panel-6"><span class="boss-name" data-i18n="boss_mroczny">B Mroczny Bóg</span> <span class="stat" data-i18n-floor="6">(p.6)</span><br><span class="stat">HP:260 ATK:45 XP:200 💰200</span></div>
+  </div>
+</div>
+<div id="touch-controls">
+  <div id="dpad">
+    <button class="dpad-btn" id="btn-up">▲</button>
+    <div id="dpad-mid">
+      <button class="dpad-btn" id="btn-left">◄</button>
+      <button class="dpad-btn" id="btn-potion">HP</button>
+      <button class="dpad-btn" id="btn-right">►</button>
+    </div>
+    <button class="dpad-btn" id="btn-down">▼</button>
+    <button class="dpad-btn" id="btn-scores" style="margin-top:4px;font-size:10px;">🏆</button>
+  </div>
+</div>
+<div id="game-wrap">
+  <div id="floor-display"><span data-i18n="floor_label">Piętro</span> <span id="floor-num">1</span> <span data-i18n="floor_of">/ 6</span></div>
+  <canvas id="game"></canvas>
+  <div id="info" data-i18n-html="info">WSAD / strzałki — ruch &nbsp;|&nbsp; H — mikstura &nbsp;|&nbsp; Ctrl+R — restart</div>
+  <div id="touch-shop-btns" style="display:none">
+    <button class="shop-btn" id="btn-shop-1">+50<br>HP</button>
+    <button class="shop-btn" id="btn-shop-2">+5<br>ATK</button>
+    <button class="shop-btn" id="btn-shop-3">-3<br>DMG</button>
+    <button class="shop-btn" id="btn-shop-q">✕</button>
+  </div>
+</div>
+<div class="panel" id="panel-right">
+  <h3 data-i18n="h_controls">🎮 STEROWANIE</h3>
+  <div class="section">
+    <div class="key"><kbd>A W S D</kbd><span data-i18n="ctrl_move">ruch</span></div>
+    <div class="key"><kbd>↑ ← ↓ →</kbd><span data-i18n="ctrl_move">ruch</span></div>
+    <div class="key"><kbd>H</kbd><span data-i18n="ctrl_potion">mikstura leczenia</span></div>
+    <div class="key"><kbd>Ctrl+R</kbd><span data-i18n="ctrl_restart">restart gry</span></div>
+    <div class="key"><kbd>1 2 3</kbd><span data-i18n="ctrl_shop">wybór w sklepie</span></div>
+    <div class="key"><kbd>Q</kbd><span data-i18n="ctrl_exit">wyjście ze sklepu</span></div>
+    <div class="key"><kbd>L</kbd><span data-i18n="ctrl_scores">tablica wyników</span></div>
+  </div>
+  <h3 data-i18n="h_legend">📖 LEGENDA</h3>
+  <div class="section">
+    <div class="key"><canvas class="leg-canvas" id="leg-wall"></canvas><span data-i18n="leg_wall">ściana</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-player"></canvas><span data-i18n="leg_player">gracz</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-goblin"></canvas><span data-i18n="leg_goblin">Goblin</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-szkielet"></canvas><span data-i18n="leg_szkielet">Szkielet</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-troll"></canvas><span data-i18n="leg_troll">Troll</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-boss"></canvas><span data-i18n="leg_boss">Boss</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-stairs"></canvas><span data-i18n="leg_stairs">schody w dół</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-gold"></canvas><span data-i18n="leg_gold">worek ze złotem</span></div>
+    <div class="key"><canvas class="leg-canvas" id="leg-potion"></canvas><span data-i18n="leg_potion">mikstura</span></div>
+  </div>
+</div>
+<script src="game.js"></script>
+</body>
+</html>

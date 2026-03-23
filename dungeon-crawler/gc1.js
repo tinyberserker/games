@@ -1,4 +1,3 @@
-
 // ===================== JĘZYK =====================
 let lang = 'pl';
 const LANG = {
@@ -22,6 +21,7 @@ const LANG = {
     msg_levelup: lv=>`POZIOM ${lv}! HP+20, ATK+3`,
     msg_gold: g=>`Znalazłeś ${g} złota!`,
     msg_potion_ground: h=>`Wypiłeś miksturę! +${h} HP`,
+    msg_potion_stored: '🧪 Pełne HP! Mikstura schowana do ekwipunku [H]',
     msg_boss_block:'Pokonaj bossa zanim zejdziesz niżej!',
     msg_enemies_block:'Pokonaj wszystkich wrogów!',
     msg_heal_buy: (_,p)=>`Uleczono +50 HP! Następna cena: ${p}zł`,
@@ -107,6 +107,7 @@ const LANG = {
     msg_levelup: lv=>`LEVEL ${lv}! HP+20, ATK+3`,
     msg_gold: g=>`Found ${g} gold!`,
     msg_potion_ground: h=>`Drank potion! +${h} HP`,
+    msg_potion_stored: '🧪 Full HP! Potion stored in inventory [H]',
     msg_boss_block:'Defeat the boss before going down!',
     msg_enemies_block:'Defeat all enemies first!',
     msg_heal_buy: (_,p)=>`Healed +50 HP! Next price: ${p}g`,
@@ -710,9 +711,16 @@ function move(dx, dy) {
       game.entities = game.entities.filter(x => x!==e);
     }
     if (e.type==='potion') {
-      const heal = randInt(20,40);
-      p.hp = Math.min(p.maxHp, p.hp + heal);
-      msg(t('msg_potion_ground', heal), '#00ffff');
+      if (p.hp >= p.maxHp) {
+        // Pełne HP — schowaj do ekwipunku
+        p.potions++;
+        msg(t('msg_potion_stored'), '#00ffff');
+      } else {
+        // Nie pełne HP — wypij od razu
+        const heal = randInt(20,40);
+        p.hp = Math.min(p.maxHp, p.hp + heal);
+        msg(t('msg_potion_ground', heal), '#00ffff');
+      }
       game.entities = game.entities.filter(x => x!==e);
     }
     if (e.type==='trap') {

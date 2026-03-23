@@ -842,6 +842,100 @@ function drawLangSelect() {
   ctx.fillText('Mystery Dungeon', W/2, H/2 + 110);
 }
 
+// ===================== WYBÓR ŚWIATA =====================
+function drawWorldSelect() {
+  ctx.fillStyle = '#050010';
+  ctx.fillRect(0, 0, W, H+HUD);
+  ctx.textAlign = 'center';
+
+  // Tytuł
+  const gr = ctx.createLinearGradient(0, H/2-90, 0, H/2-60);
+  gr.addColorStop(0,'#ffd700'); gr.addColorStop(1,'#ff8800');
+  ctx.fillStyle = gr;
+  ctx.font = 'bold 13px Courier New';
+  ctx.fillText('╔════════════════╗', W/2, H/2-78);
+  ctx.fillText('  ' + t('world_select_title') + '  ', W/2, H/2-62);
+  ctx.fillText('╚════════════════╝', W/2, H/2-46);
+
+  const bw = 200, bh = 48;
+
+  // Świat I
+  const w1x = W/2 - bw/2, w1y = H/2 - 34;
+  ctx.fillStyle = '#0e0825';
+  ctx.fillRect(w1x, w1y, bw, bh);
+  ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(w1x, w1y, bw, bh);
+  ctx.fillStyle = '#ffd700';
+  ctx.font = 'bold 11px Courier New';
+  ctx.fillText(t('world1_name'), W/2, w1y + 18);
+  ctx.fillStyle = '#888'; ctx.font = '9px Courier New';
+  ctx.fillText(t('world1_sub'), W/2, w1y + 34);
+
+  // Świat II
+  const w2unlocked = isWorld2Unlocked();
+  const w2x = W/2 - bw/2, w2y = H/2 + 26;
+  ctx.fillStyle = '#100510';
+  ctx.fillRect(w2x, w2y, bw, bh);
+  ctx.strokeStyle = w2unlocked ? '#ff2222' : '#333'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(w2x, w2y, bw, bh);
+
+  if (w2unlocked) {
+    ctx.fillStyle = '#ff4444';
+    ctx.font = 'bold 11px Courier New';
+    ctx.fillText(t('world2_name'), W/2, w2y + 18);
+    ctx.fillStyle = '#888'; ctx.font = '9px Courier New';
+    ctx.fillText(t('world2_sub'), W/2, w2y + 34);
+  } else {
+    ctx.fillStyle = '#444';
+    ctx.font = 'bold 11px Courier New';
+    ctx.fillText(t('world2_locked'), W/2, w2y + 18);
+    ctx.fillStyle = '#333'; ctx.font = '9px Courier New';
+    ctx.fillText(t('world2_locked_sub'), W/2, w2y + 34);
+  }
+}
+
+// ===================== ŚWIAT 1 UKOŃCZONY =====================
+function drawWorldComplete() {
+  ctx.fillStyle = '#050010';
+  ctx.fillRect(0, 0, W, H+HUD);
+  ctx.textAlign = 'center';
+
+  // Gwiazdy w tle
+  const now = Date.now() / 1000;
+  for (let i = 0; i < 30; i++) {
+    const sx = (i * 47 + 23) % W;
+    const sy = (i * 67 + 11) % (H + HUD);
+    const alpha = 0.3 + 0.7 * Math.abs(Math.sin(now + i));
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = '#ffd700';
+    ctx.fillRect(sx, sy, 1.5, 1.5);
+  }
+  ctx.globalAlpha = 1;
+
+  // Tytuł
+  const gr = ctx.createLinearGradient(0, H/2-70, 0, H/2-30);
+  gr.addColorStop(0,'#ffd700'); gr.addColorStop(1,'#ffaa00');
+  ctx.fillStyle = gr;
+  ctx.font = 'bold 12px Courier New';
+  ctx.fillText(t('world1_complete_title'), W/2, H/2-46);
+
+  ctx.fillStyle = '#00ff88';
+  ctx.font = '9px Courier New';
+  ctx.fillText(t('world1_complete_sub'), W/2, H/2-18);
+
+  // Statystyki gracza
+  if (game.player) {
+    const p = game.player;
+    ctx.fillStyle = '#aaa';
+    ctx.font = '9px Courier New';
+    ctx.fillText(`Lv${p.level}  ${p.gold} zł  ${game.killCount} kills`, W/2, H/2+4);
+  }
+
+  ctx.fillStyle = '#555';
+  ctx.font = '8px Courier New';
+  ctx.fillText(t('world1_complete_next'), W/2, H/2+28);
+}
+
 function drawTitle() {
   ctx.fillStyle = '#0a0010';
   ctx.fillRect(0, 0, W, H+HUD);
@@ -981,6 +1075,16 @@ function draw() {
   }
   if (game.state === 'ability_pick') {
     drawAbilityPick();
+    requestAnimationFrame(draw);
+    return;
+  }
+  if (game.state === 'world_select') {
+    drawWorldSelect();
+    requestAnimationFrame(draw);
+    return;
+  }
+  if (game.state === 'world_complete') {
+    drawWorldComplete();
     requestAnimationFrame(draw);
     return;
   }
@@ -1233,7 +1337,17 @@ canvas.addEventListener('touchend', e => {
   }
   if (game.state === 'scores') { game.state = 'title'; return; }
   // Ekran śmierci/zwycięstwa — tap = restart
-  if (game.state === 'dead' || game.state === 'victory') { initGame(); return; }
+  if (game.state === 'dead') { initGame(); return; }
+  if (game.state === 'victory') { currentWorld=1; initGame(); return; }
+  if (game.state === 'world_complete') { game.state = 'world_select'; return; }
+  if (game.state === 'world_select') {
+    const {x, y} = getCanvasPos(e.changedTouches[0]);
+    const bw = 200, bh = 48;
+    const w1y = H/2 - 34, w2y = H/2 + 26;
+    if (y >= w1y && y <= w1y+bh) { currentWorld=1; game.state='title'; return; }
+    if (y >= w2y && y <= w2y+bh && isWorld2Unlocked()) { currentWorld=2; game.state='title'; return; }
+    return;
+  }
   // Swipe do ruchu
   if (game.state === 'playing' && swipeStart) {
     const dx = e.changedTouches[0].clientX - swipeStart.x;

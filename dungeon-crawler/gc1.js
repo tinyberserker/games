@@ -22,6 +22,8 @@ const LANG = {
     msg_gold: g=>`Znalazłeś ${g} złota!`,
     msg_potion_ground: h=>`Wypiłeś miksturę! +${h} HP`,
     msg_potion_stored: '🧪 Pełne HP! Mikstura schowana do ekwipunku [H]',
+    msg_potion_full: '🧪 Ekwipunek pełny! (max 3 mikstury)',
+    msg_floor_potion: '🧪 Dostajeś miksturę na nowe piętro!',
     msg_boss_block:'Pokonaj bossa zanim zejdziesz niżej!',
     msg_enemies_block:'Pokonaj wszystkich wrogów!',
     msg_heal_buy: (_,p)=>`Uleczono +50 HP! Następna cena: ${p}zł`,
@@ -35,7 +37,7 @@ const LANG = {
     hud_gold: g=>`Złoto: ${g} zł`,
     hud_shield: s=>` Tarcza:-${s}`,
     hud_kills: k=>`Zabici: ${k}`,
-    hud_potions: n=>`Mikstury: ${n} [H]`,
+    hud_potions: n=>`Mikstury: ${n}/3 [H]`,
     shop_title:'=== SKLEP ===',
     shop_gold: g=>`Złoto: ${g} zł`,
     shop_heal:'[1] Leczenie  +50 HP',
@@ -108,6 +110,8 @@ const LANG = {
     msg_gold: g=>`Found ${g} gold!`,
     msg_potion_ground: h=>`Drank potion! +${h} HP`,
     msg_potion_stored: '🧪 Full HP! Potion stored in inventory [H]',
+    msg_potion_full: '🧪 Inventory full! (max 3 potions)',
+    msg_floor_potion: '🧪 You receive a potion for the new floor!',
     msg_boss_block:'Defeat the boss before going down!',
     msg_enemies_block:'Defeat all enemies first!',
     msg_heal_buy: (_,p)=>`Healed +50 HP! Next price: ${p}g`,
@@ -121,7 +125,7 @@ const LANG = {
     hud_gold: g=>`Gold: ${g}`,
     hud_shield: s=>` Shield:-${s}`,
     hud_kills: k=>`Kills: ${k}`,
-    hud_potions: n=>`Potions: ${n} [H]`,
+    hud_potions: n=>`Potions: ${n}/3 [H]`,
     shop_title:'=== SHOP ===',
     shop_gold: g=>`Gold: ${g}`,
     shop_heal:'[1] Healing  +50 HP',
@@ -174,6 +178,7 @@ const LANG = {
     ab_vision:'Clairvoyance',  ab_vision_d:'+2 vision radius',
   }
 };
+const POTION_MAX = 3;
 function t(key, ...args) {
   const val = LANG[lang][key];
   return typeof val === 'function' ? val(...args) : (val ?? key);
@@ -225,7 +230,7 @@ const BOSSES = [
 let game = {};
 
 const DIFF_SETTINGS = {
-  1: { enemyHp:0.6, enemyAtk:0.6, hp:130, atk:10, potions:5 },
+  1: { enemyHp:0.6, enemyAtk:0.6, hp:130, atk:10, potions:3 },
   2: { enemyHp:1.0, enemyAtk:1.0, hp:100, atk:8,  potions:3 },
   3: { enemyHp:1.6, enemyAtk:1.5, hp:75,  atk:7,  potions:2 },
   4: { enemyHp:2.8, enemyAtk:2.5, hp:50,  atk:6,  potions:1 },
@@ -243,7 +248,7 @@ function initGame() {
     player: newPlayer(),
     grid: [], entities: [],
     messages: [],
-    state: 'playing', // playing | shop | dead | victory
+    state: 'playing',
     shopPrices: {heal:20, sword:30, shield:25},
     flashTimer: 0,
     flashMsg: '',
@@ -259,7 +264,6 @@ function initGame() {
     showScores: false,
     difficulty: difficulty,
   };
-  // reset boss panel
   for (let i=1; i<=6; i++) {
     const el = document.getElementById(`boss-panel-${i}`);
     if (el) el.classList.remove('boss-defeated');
@@ -277,8 +281,7 @@ function shuffle(arr) {
 }
 
 function generateMap(floorNum) {
-  const grid = Array.from({length: ROWS}, () => Array(COLS).fill(1)); // 1=wall
-  // Iteracyjne DFS
+  const grid = Array.from({length: ROWS}, () => Array(COLS).fill(1));
   grid[1][1] = 0;
   const stack = [[1,1]];
   while (stack.length) {
@@ -317,11 +320,9 @@ function generateMap(floorNum) {
     }
   }
 
-  // Złoto
   place(4 + floorNum, 'gold');
-  // Mikstura
   place(2, 'potion');
-  // Wrogowie
+
   const enemyCount = 3 + floorNum * 2;
   for (let i = 0; i < enemyCount; i++) {
     for (let j = free.length-1; j >= 0; j--) {
@@ -337,7 +338,6 @@ function generateMap(floorNum) {
       }
     }
   }
-  // Boss
   for (let j = free.length-1; j >= 0; j--) {
     const [x,y] = free[j];
     if (!used.has(`${x},${y}`)) {
@@ -349,7 +349,6 @@ function generateMap(floorNum) {
       used.add(`${x},${y}`); break;
     }
   }
-  // Schody
   for (let j = 0; j < free.length; j++) {
     const [x,y] = free[j];
     if (!used.has(`${x},${y}`)) {
@@ -357,7 +356,6 @@ function generateMap(floorNum) {
       used.add(`${x},${y}`); break;
     }
   }
-  // Pułapki (ukryte)
   const trapCount = 2 + Math.floor(floorNum/2);
   for (let i=0; i<trapCount; i++) {
     for (let j=free.length-1; j>=0; j--) {
@@ -368,7 +366,6 @@ function generateMap(floorNum) {
       }
     }
   }
-  // Skrzynie
   const chestCount = 1 + Math.floor(floorNum/3);
   for (let i=0; i<chestCount; i++) {
     for (let j=free.length-1; j>=0; j--) {
@@ -379,9 +376,7 @@ function generateMap(floorNum) {
       }
     }
   }
-  // Tajne pomieszczenie (losowo, ~40% szans)
   if (Math.random() < 0.4) {
-    // Znajdź wolną ścianę na obrzeżach i wykuj mały pokój
     const wallCandidates = [];
     for (let y=2; y<ROWS-3; y++) for (let x=2; x<COLS-3; x++) {
       if (grid[y][x]===1 && grid[y+1][x]===1 && grid[y][x+1]===1 && grid[y+1][x+1]===1 &&
@@ -390,7 +385,6 @@ function generateMap(floorNum) {
     if (wallCandidates.length > 0) {
       const [sx,sy] = wallCandidates[Math.floor(Math.random()*wallCandidates.length)];
       grid[sy][sx]=0; grid[sy+1][sx]=0; grid[sy][sx+1]=0; grid[sy+1][sx+1]=0;
-      // Wypełnij bonusami
       [[sx,sy],[sx+1,sy],[sx,sy+1],[sx+1,sy+1]].forEach(([tx,ty])=>{
         if (!used.has(`${tx},${ty}`)) {
           const roll=Math.random();
@@ -636,8 +630,8 @@ function levelUp() {
 function randInt(a, b) { return a + Math.floor(Math.random()*(b-a+1)); }
 
 // ===================== RUCH WROGÓW =====================
-const ENEMY_PATROL = 2;  // max kratki od spawnu
-const ENEMY_DETECT = 5;  // zasięg wykrycia gracza
+const ENEMY_PATROL = 2;
+const ENEMY_DETECT = 5;
 
 function hasLineOfSight(x0, y0, x1, y1) {
   let dx = Math.abs(x1 - x0), dy = Math.abs(y1 - y0);
@@ -659,7 +653,6 @@ function moveEnemies() {
   for (const e of game.entities) {
     if ((e.type !== 'enemy' && e.type !== 'boss') || e.dying) continue;
 
-    // Czy gracz jest sąsiadem? — walka jest po stronie gracza, nie ruszaj
     const adjToPlayer = Math.abs(e.x - p.x) <= 1 && Math.abs(e.y - p.y) <= 1
                      && !(e.x === p.x && e.y === p.y);
     if (adjToPlayer) continue;
@@ -669,13 +662,11 @@ function moveEnemies() {
     let dirs;
 
     if (canSee) {
-      // Gonij gracza — preferuj kierunek zmniejszający odległość
       const dx = Math.sign(p.x - e.x), dy = Math.sign(p.y - e.y);
       if (dx !== 0 && dy !== 0) dirs = [[dx,0],[0,dy],[-dx,0],[0,-dy]];
       else if (dx !== 0)        dirs = [[dx,0],[0,1],[0,-1],[-dx,0]];
       else                      dirs = [[0,dy],[1,0],[-1,0],[0,-dy]];
     } else {
-      // Losowy spacer
       dirs = [[1,0],[-1,0],[0,1],[0,-1]].sort(() => Math.random()-0.5);
     }
 
@@ -712,11 +703,15 @@ function move(dx, dy) {
     }
     if (e.type==='potion') {
       if (p.hp >= p.maxHp) {
-        // Pełne HP — schowaj do ekwipunku
-        p.potions++;
-        msg(t('msg_potion_stored'), '#00ffff');
+        // Pełne HP — schowaj do ekwipunku (jeśli miejsce)
+        if (p.potions < POTION_MAX) {
+          p.potions++;
+          msg(t('msg_potion_stored'), '#00ffff');
+        } else {
+          msg(t('msg_potion_full'), '#ff8800');
+        }
       } else {
-        // Nie pełne HP — wypij od razu
+        // Niepełne HP — wypij od razu
         const heal = randInt(20,40);
         p.hp = Math.min(p.maxHp, p.hp + heal);
         msg(t('msg_potion_ground', heal), '#00ffff');
@@ -742,9 +737,18 @@ function move(dx, dy) {
       } else if (roll < 0.80) {
         const items = ['potion','atk','shield'];
         const item = items[Math.floor(Math.random()*items.length)];
-        if (item==='potion') { p.potions++; msg(t('msg_chest_item', '🧪 mikstura'), '#00ffff'); }
-        else if (item==='atk') { p.atk+=3; msg(t('msg_chest_item', '⚔ +3 ATK'), '#ff8800'); }
-        else { p.shield+=1; msg(t('msg_chest_item', '🛡 +1 tarcza'), '#88aaff'); }
+        if (item==='potion') {
+          if (p.potions < POTION_MAX) {
+            p.potions++;
+            msg(t('msg_chest_item', '🧪 mikstura'), '#00ffff');
+          } else {
+            msg(t('msg_potion_full'), '#ff8800');
+          }
+        } else if (item==='atk') {
+          p.atk+=3; msg(t('msg_chest_item', '⚔ +3 ATK'), '#ff8800');
+        } else {
+          p.shield+=1; msg(t('msg_chest_item', '🛡 +1 tarcza'), '#88aaff');
+        }
       } else {
         const dmg = randInt(15,30);
         p.hp -= dmg;
@@ -802,6 +806,11 @@ function buyItem(key) {
   } else if (key==='q'||key==='Q'||key==='Escape') {
     game.floor++;
     game.player.hp = game.player.maxHp;
+    // +1 mikstura za nowe piętro (do limitu)
+    if (p.potions < POTION_MAX) {
+      p.potions++;
+      msg(t('msg_floor_potion'), '#00ffff');
+    }
     msg(t('msg_new_floor', game.floor), '#00ff88');
     loadFloor();
     game.state = 'playing';

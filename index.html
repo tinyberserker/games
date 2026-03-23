@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Tinyberserker Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -58,14 +61,28 @@
       display: flex; align-items: center; gap: 14px;
     }
 
-    /* Tekst tytułu — order 1 (lewo) */
+    /* Logo berserker — order 1 (LEWA strona) */
+    #berserker-logo {
+      order: 1;
+      width: 52px; height: 52px; flex-shrink: 0;
+      animation: logoPulse 3.5s ease-in-out infinite;
+      cursor: default;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(40,120,255,0.6)); }
+      50%       { filter: drop-shadow(0 0 18px rgba(80,160,255,0.9)); }
+    }
+
+    /* Tekst tytułu — order 2 (prawa strona) */
     #title-text {
       display: flex; flex-direction: column;
-      order: 1;
+      order: 2;
     }
 
     #title-main {
-      font-size: 26px; font-weight: 900; letter-spacing: 4px; text-transform: uppercase;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 22px; font-weight: 900; letter-spacing: 2px;
       background: linear-gradient(90deg, #c084fc 0%, #818cf8 40%, #67e8f9 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       line-height: 1;
@@ -75,20 +92,6 @@
     #title-sub {
       font-size: 11px; color: rgba(255,255,255,0.35);
       letter-spacing: 3px; text-transform: uppercase; margin-top: 4px;
-    }
-
-    /* Logo berserker — order 2 (prawo od tytułu) */
-    #berserker-logo {
-      order: 2;
-      width: 52px; height: 52px; flex-shrink: 0;
-      filter: drop-shadow(0 0 8px rgba(160,80,255,0.5));
-      animation: logoPulse 3.5s ease-in-out infinite;
-      cursor: default;
-    }
-
-    @keyframes logoPulse {
-      0%, 100% { filter: drop-shadow(0 0 8px rgba(160,80,255,0.5)); }
-      50%       { filter: drop-shadow(0 0 18px rgba(200,120,255,0.85)); }
     }
 
     #controls-hint { display: flex; gap: 12px; align-items: center; }
@@ -126,7 +129,7 @@
 
     #gallery-wrapper {
       position: relative; overflow: hidden;
-      padding: 20px 0 30px; flex-shrink: 0;
+      padding: 20px 0 10px; flex-shrink: 0;
     }
     #gallery-wrapper::before, #gallery-wrapper::after {
       content: ''; position: absolute; top: 0; bottom: 0; width: 80px;
@@ -187,11 +190,26 @@
     .game-card.placeholder { opacity: 0.4; cursor: not-allowed; }
     .game-card.placeholder:hover { filter: brightness(0.65) saturate(0.7); transform: none; }
 
-    /* ===== DOLNY PANEL — STAŁA WYSOKOŚĆ (zapobiega skakaniu layoutu) ===== */
+    /* ===== DOTY — pod kafelkami (normalny flow) ===== */
+    #nav-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      z-index: 10;
+      padding: 10px 0 6px;
+      flex-shrink: 0;
+    }
+    .nav-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: rgba(255,255,255,0.2); transition: all 0.3s ease; cursor: pointer;
+    }
+    .nav-dot.active { background: #c084fc; width: 20px; border-radius: 3px; box-shadow: 0 0 8px rgba(192,132,252,0.6); }
+
+    /* ===== DOLNY PANEL — STAŁA WYSOKOŚĆ ===== */
     #info-panel {
       position: relative; z-index: 10;
       padding: 0 48px 20px;
-      height: 130px;       /* stała — niezależna od zawartości */
+      height: 130px;
       flex-shrink: 0;
       display: flex; flex-direction: column; justify-content: flex-end;
     }
@@ -210,16 +228,15 @@
     #desc-text {
       font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.55);
       max-width: 580px;
-      height: 40px;    /* stała — 2 linie; overflow ukryty */
+      height: 40px;
       overflow: hidden; margin-bottom: 10px;
     }
     #desc-meta {
       display: flex; align-items: center; gap: 20px;
-      height: 34px;    /* stała — nie zmienia się przy zmianie karty */
+      height: 34px;
     }
     #desc-author { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
 
-    /* Przycisk GRAJ — visibility zamiast display, żeby nie ruszał layoutu */
     #play-btn {
       display: inline-flex; align-items: center; gap: 8px;
       background: linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%);
@@ -233,18 +250,6 @@
       background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
       box-shadow: 0 6px 25px rgba(124,58,237,0.6); transform: translateY(-1px);
     }
-
-    /* ===== DOTY ===== */
-    #nav-dots {
-      position: absolute; bottom: 136px; left: 50%;
-      transform: translateX(-50%);
-      display: flex; gap: 8px; z-index: 10;
-    }
-    .nav-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(255,255,255,0.2); transition: all 0.3s ease; cursor: pointer;
-    }
-    .nav-dot.active { background: #c084fc; width: 20px; border-radius: 3px; box-shadow: 0 0 8px rgba(192,132,252,0.6); }
 
     /* ===== STRZAŁKI ===== */
     .nav-arrow {
@@ -284,15 +289,15 @@
       body { overflow: hidden; }
 
       #header { padding: 12px 16px 10px; }
-      #title-main { font-size: 16px; letter-spacing: 2px; }
+      #title-main { font-size: 14px; letter-spacing: 1px; }
       #title-sub  { font-size: 9px;  letter-spacing: 1px; }
-      #berserker-logo { width: 38px; height: 38px; }
+      #berserker-logo { width: 36px; height: 36px; }
       #controls-hint  { display: none; }
       #logo-area { gap: 10px; }
 
       #section-label  { padding: 0 16px; margin-bottom: 10px; font-size: 10px; }
 
-      #gallery-wrapper { padding: 10px 0 18px; touch-action: pan-y; }
+      #gallery-wrapper { padding: 10px 0 6px; touch-action: pan-y; }
       #gallery-wrapper::before,
       #gallery-wrapper::after { width: 20px; }
       #gallery { gap: 14px; padding: 0 16px; }
@@ -307,7 +312,7 @@
       #desc-meta    { height: 28px; gap: 10px; }
       #play-btn     { font-size: 11px; padding: 6px 14px; letter-spacing: 1px; }
 
-      #nav-dots { bottom: 116px; }
+      #nav-dots { padding: 6px 0 4px; }
       .nav-dot  { width: 5px; height: 5px; }
       .nav-dot.active { width: 14px; }
 
@@ -319,14 +324,14 @@
     /* ===== MOBILE LANDSCAPE ===== */
     @media (max-width: 900px) and (orientation: landscape) {
       #header { padding: 8px 24px 6px; }
-      #title-main { font-size: 18px; letter-spacing: 3px; }
+      #title-main { font-size: 14px; letter-spacing: 1px; }
       #title-sub  { font-size: 9px; }
-      #berserker-logo { width: 36px; height: 36px; }
+      #berserker-logo { width: 34px; height: 34px; }
       #controls-hint  { display: none; }
 
       #section-label { margin-bottom: 8px; padding: 0 24px; font-size: 10px; }
 
-      #gallery-wrapper { padding: 8px 0 14px; touch-action: pan-y; }
+      #gallery-wrapper { padding: 8px 0 6px; touch-action: pan-y; }
       #gallery { gap: 16px; padding: 0 24px; }
       .game-card { width: 210px; height: 144px; }
       .card-title { font-size: 14px; }
@@ -337,14 +342,14 @@
       #desc-meta  { height: 26px; }
       #play-btn   { font-size: 11px; padding: 4px 14px; }
 
-      #nav-dots { bottom: 102px; }
+      #nav-dots { padding: 4px 0 2px; }
       .nav-arrow { width: 36px; height: 36px; }
     }
 
     /* ===== TABLET PORTRAIT ===== */
     @media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
       #header { padding: 16px 32px 12px; }
-      #title-main { font-size: 22px; letter-spacing: 3px; }
+      #title-main { font-size: 18px; letter-spacing: 2px; }
       #controls-hint { display: none; }
 
       #section-label { padding: 0 32px; }
@@ -352,7 +357,7 @@
       .game-card { width: 280px; height: 194px; }
 
       #info-panel { padding: 0 32px 18px; height: 120px; }
-      #nav-dots { bottom: 126px; }
+      #nav-dots { padding: 8px 0 4px; }
     }
   </style>
 </head>
@@ -360,59 +365,55 @@
 
 <header id="header">
   <div id="logo-area">
-    <!-- Tytuł po lewej -->
-    <div id="title-text">
-      <span id="title-main">Tinyberserker Games</span>
-      <span id="title-sub">kolekcja gier &nbsp;&middot;&nbsp; tinyberserker</span>
-    </div>
-    <!-- Logo berserker po prawej stronie napisu -->
+    <!-- Logo berserker PO LEWEJ (order:1) -->
     <div id="berserker-logo">
       <svg viewBox="0 0 52 52" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="lbg" cx="40%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="#2a0858"/>
-            <stop offset="100%" stop-color="#08021a"/>
+          <radialGradient id="lbg" cx="50%" cy="40%" r="65%">
+            <stop offset="0%" stop-color="#0a1a3a"/>
+            <stop offset="100%" stop-color="#03080f"/>
           </radialGradient>
-          <filter id="eyeglow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur stdDeviation="1.1" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-          <filter id="runeglow" x="-100%" y="-100%" width="300%" height="300%">
-            <feGaussianBlur stdDeviation="1.4" result="b"/>
+          <linearGradient id="axeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#d0e0f4"/>
+            <stop offset="40%" stop-color="#8ab0d8"/>
+            <stop offset="100%" stop-color="#4a6888"/>
+          </linearGradient>
+          <filter id="bglow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="1.6" result="b"/>
             <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
         <!-- Tło -->
-        <circle cx="26" cy="26" r="25" fill="url(#lbg)" stroke="rgba(150,70,255,0.8)" stroke-width="1.5"/>
-        <circle cx="26" cy="26" r="21.5" fill="none" stroke="rgba(150,70,255,0.14)" stroke-width="0.8"/>
-        <!-- Lewy róg -->
-        <path d="M16 23 Q10 12 13 7 Q15.5 15 18 21" fill="#b08838" stroke="#6b4818" stroke-width="1"/>
-        <!-- Prawy róg -->
-        <path d="M36 23 Q42 12 39 7 Q36.5 15 34 21" fill="#b08838" stroke="#6b4818" stroke-width="1"/>
-        <!-- Kask górna część -->
-        <path d="M15 23 Q15 12 26 11 Q37 12 37 23" fill="#7a5c28" stroke="#4a3a10" stroke-width="1"/>
-        <!-- Kask rondo -->
-        <rect x="13" y="22" width="26" height="3.5" rx="1.7" fill="#906a30" stroke="#4a3a10" stroke-width="0.9"/>
-        <!-- Osłona nosa -->
-        <rect x="24" y="25.5" width="4" height="8" rx="2" fill="#7a5c28" stroke="#4a3a10" stroke-width="0.7"/>
-        <!-- Szpary oczu czarne -->
-        <rect x="15" y="24" width="7" height="3" rx="1.5" fill="#080404"/>
-        <rect x="30" y="24" width="7" height="3" rx="1.5" fill="#080404"/>
-        <!-- Oczy świecące czerwone -->
-        <rect x="15.4" y="24.4" width="6.2" height="2.2" rx="1" fill="#ff3300" filter="url(#eyeglow)"/>
-        <rect x="30.4" y="24.4" width="6.2" height="2.2" rx="1" fill="#ff3300" filter="url(#eyeglow)"/>
-        <!-- Broda -->
-        <path d="M19 31 Q26 35.5 33 31 Q32 39 26 40 Q20 39 19 31" fill="#5a3a15" stroke="#3a2008" stroke-width="0.8"/>
-        <!-- Runa na kasku błyskawica -->
-        <path d="M24.5 14 L27 18 L24.8 18 L27.5 22" stroke="#c084fc" stroke-width="1.6" fill="none" stroke-linecap="round" filter="url(#runeglow)"/>
-        <!-- Siekiera trzonek -->
-        <line x1="35" y1="30" x2="41.5" y2="41" stroke="#7a5530" stroke-width="2.4" stroke-linecap="round"/>
-        <!-- Siekiera głownia -->
-        <path d="M31.5 26.5 L39.5 23.5 L42.5 33 L34.5 35.5 Z" fill="#c0c0d0" stroke="#888" stroke-width="0.8"/>
-        <path d="M31.5 26.5 L39.5 23.5 L36 26" fill="#e8e8f8"/>
-        <!-- Ostry kant -->
-        <path d="M31.5 26.5 L34.5 35.5" stroke="rgba(255,255,255,0.55)" stroke-width="0.7"/>
+        <circle cx="26" cy="26" r="25" fill="url(#lbg)" stroke="rgba(40,120,255,0.65)" stroke-width="1.3"/>
+        <!-- Trzonek (pionowy) -->
+        <rect x="24.5" y="11" width="3" height="31" rx="1.5" fill="#7a4a20" stroke="#3a2008" stroke-width="0.7"/>
+        <!-- Lewa głownia -->
+        <path d="M24.5 14 Q5 9 5 22 Q5 35 24.5 30 Z" fill="url(#axeGrad)" stroke="#4a70a0" stroke-width="0.7"/>
+        <!-- Prawa głownia -->
+        <path d="M27.5 14 Q47 9 47 22 Q47 35 27.5 30 Z" fill="url(#axeGrad)" stroke="#4a70a0" stroke-width="0.7"/>
+        <!-- Refleksy na ostrzach -->
+        <path d="M24.5 14 Q5 9 5 22" stroke="rgba(220,240,255,0.55)" stroke-width="0.9" fill="none"/>
+        <path d="M27.5 14 Q47 9 47 22" stroke="rgba(220,240,255,0.55)" stroke-width="0.9" fill="none"/>
+        <!-- ᛏ Runa Tiwaz (T) — lewa głownia -->
+        <g filter="url(#bglow)">
+          <line x1="13" y1="15" x2="13" y2="29" stroke="#44aaff" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="13" y1="19" x2="8.5" y2="24" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="13" y1="19" x2="17.5" y2="24" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
+        <!-- ᛒ Runa Berkano (B) — prawa głownia -->
+        <g filter="url(#bglow)">
+          <line x1="37" y1="15" x2="37" y2="29" stroke="#44aaff" stroke-width="1.6" stroke-linecap="round"/>
+          <line x1="37" y1="15" x2="41.5" y2="18" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="41.5" y1="18" x2="37" y2="22" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="37" y1="22" x2="41.5" y2="25.5" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
+          <line x1="41.5" y1="25.5" x2="37" y2="29" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
+        </g>
       </svg>
+    </div>
+    <!-- Tekst tytułu po PRAWEJ stronie logo (order:2) -->
+    <div id="title-text">
+      <span id="title-main">Tinyberserker Games</span>
+      <span id="title-sub">kolekcja gier &nbsp;&middot;&nbsp; tinyberserker</span>
     </div>
   </div>
 
@@ -444,7 +445,7 @@
         <div class="card-badge badge-new">Graj</div>
         <div class="card-overlay">
           <div class="card-title">Dungeon Crawler</div>
-          <div class="card-author">przez Jasia</div>
+          <div class="card-author">By Jasiu</div>
           <div class="card-tags">
             <span class="tag tag-rpg">RPG</span>
             <span class="tag tag-roguelk">Roguelike</span>
@@ -458,7 +459,7 @@
         <div class="card-badge badge-soon">Wkrótce</div>
         <div class="card-overlay">
           <div class="card-title">??? Nieznana Gra</div>
-          <div class="card-author">przez Jasia</div>
+          <div class="card-author">By Jasiu</div>
           <div class="card-tags"><span class="tag tag-soon">W planach</span></div>
         </div>
       </div>
@@ -468,13 +469,14 @@
         <div class="card-badge badge-soon">Wkrótce</div>
         <div class="card-overlay">
           <div class="card-title">??? Projekt X</div>
-          <div class="card-author">przez Jasia</div>
+          <div class="card-author">By Jasiu</div>
           <div class="card-tags"><span class="tag tag-soon">W planach</span></div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Doty NAWIGACYJne — w normalnym flow, pod gallery -->
   <div id="nav-dots">
     <div class="nav-dot active" onclick="selectCard(0)"></div>
     <div class="nav-dot" onclick="selectCard(1)"></div>
@@ -482,13 +484,12 @@
   </div>
 </main>
 
-<!-- Stała wysokość — niezależna od zawartości aktywnej karty -->
 <div id="info-panel">
   <div id="game-description">
     <div id="desc-title">Dungeon Crawler</div>
-    <div id="desc-text">Mroczna roguelike RPG &#8212; eksploruj lochy, bij potwory, zdobywaj z&#322;oto. 6 pi&#281;ter, 6 boss&#243;w, sklep i zdolno&#347;ci pasywne!</div>
+    <div id="desc-text">Mroczna roguelike RPG &#8212; eksploruj lochy, bij potwory, zdobywaj z&#322;oto. 6 pi&#281;ter, 6 bossów, sklep i zdolności pasywne!</div>
     <div id="desc-meta">
-      <span id="desc-author">Autor: Ja&#347; &nbsp;&middot;&nbsp; 2025</span>
+      <span id="desc-author">By Jasiu &nbsp;&middot;&nbsp; 2025</span>
       <a id="play-btn" href="dungeon-crawler/index.html">&#9658; &nbsp;Graj teraz</a>
     </div>
   </div>
@@ -498,23 +499,27 @@
 // ===================== DANE GIER =====================
 var GAMES = [
   {
-    id: 0, title: 'Dungeon Crawler', author: 'Ja\u015b', year: '2025',
+    id: 0, title: 'Dungeon Crawler', author: 'Jasiu', year: '2025',
     description: 'Mroczna roguelike RPG \u2014 eksploruj lochy, bij potwory, zdobywaj z\u0142oto. 6 pi\u0119ter, 6 boss\u00f3w, sklep i zdolno\u015bci pasywne!',
     url: 'dungeon-crawler/index.html', available: true, coverStyle: 'dungeon',
   },
   {
-    id: 1, title: '??? Nieznana Gra', author: 'Ja\u015b', year: '???',
+    id: 1, title: '??? Nieznana Gra', author: 'Jasiu', year: '???',
     description: 'Tajemniczy projekt w fazie planowania\u2026 wr\u00f3\u0107 tutaj wkr\u00f3tce.',
     url: null, available: false, coverStyle: 'mystery',
   },
   {
-    id: 2, title: '??? Projekt X', author: 'Ja\u015b', year: '???',
+    id: 2, title: '??? Projekt X', author: 'Jasiu', year: '???',
     description: 'Co\u015b nowego jest w drodze. B\u0105d\u017a na bie\u017c\u0105co!',
     url: null, available: false, coverStyle: 'mystery2',
   },
 ];
 
 var currentIndex = 0;
+
+// ===================== ALIVE ANIMATION (dungeon cover) =====================
+var dungeonAliveTimer = 0;  // countdown frames (60fps ≈ 65 frames = ~1s)
+function triggerDungeonAlive() { dungeonAliveTimer = 65; }
 
 // ===================== WEB AUDIO =====================
 var audioCtx = null;
@@ -524,8 +529,6 @@ function ensureAudio() {
   }
 }
 
-/* Nawigacja: mi\u0119kki dwutonowy sygna\u0142 (tr\u00f3jk\u0105t, C5 -> E5)
-   Brzmi jak kursor menu w klasycznych grach RPG */
 function playNavSound() {
   ensureAudio();
   if (!audioCtx) return;
@@ -546,7 +549,6 @@ function playNavSound() {
   } catch(e) {}
 }
 
-/* Wej\u015bcie do gry: arpeggio C-E-G-C (dur) \u2014 klasyczny RPG "select" */
 function playSelectSound() {
   ensureAudio();
   if (!audioCtx) return;
@@ -582,13 +584,13 @@ function selectCard(index) {
   currentIndex = index;
   var card = document.getElementById('card-' + index);
   if (card) card.classList.add('active');
+  if (index === 0) triggerDungeonAlive();
   updateGalleryTransform();
   updateInfoPanel();
   updateDots();
   updateArrows();
 }
 
-/* Dynamicznie oblicza pozycj\u0119 galerii \u2014 dzia\u0142a na ka\u017cdym rozmiarze ekranu */
 function updateGalleryTransform() {
   var gallery = document.getElementById('gallery');
   var card = document.querySelector('.game-card');
@@ -603,7 +605,6 @@ function updateGalleryTransform() {
   gallery.style.transform = 'translateX(' + offset + 'px)';
 }
 
-/* Aktualizuje panel opisu \u2014 visibility zamiast display (brak skakania layoutu) */
 function updateInfoPanel() {
   var game = GAMES[currentIndex];
   var desc = document.getElementById('game-description');
@@ -616,12 +617,12 @@ function updateInfoPanel() {
   setTimeout(function() {
     titleEl.textContent  = game.title;
     textEl.textContent   = game.description;
-    authorEl.textContent = 'Autor: ' + game.author + ' \u00b7 ' + game.year;
+    authorEl.textContent = 'By ' + game.author + ' \u00b7 ' + game.year;
     if (game.available && game.url) {
       playBtn.href = game.url;
       playBtn.classList.remove('hidden');
     } else {
-      playBtn.classList.add('hidden'); /* visibility:hidden \u2014 zajmuje miejsce, nie rusza layoutu */
+      playBtn.classList.add('hidden');
     }
     desc.classList.add('visible');
   }, 160);
@@ -641,6 +642,7 @@ function updateArrows() {
 function enterGame(index) {
   var game = GAMES[index];
   if (!game.available) { showFlash('Ta gra jest jeszcze w przygotowaniu...'); return; }
+  if (index === 0) triggerDungeonAlive();
   playSelectSound();
   showFlash('\u0141adowanie ' + game.title + '...');
   setTimeout(function() { window.location.href = game.url; }, 420);
@@ -662,7 +664,7 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ===================== TOUCH SWIPE NA GALERII =====================
+// ===================== TOUCH SWIPE =====================
 var txStart = null, tyStart = null;
 var gw = document.getElementById('gallery-wrapper');
 
@@ -671,7 +673,6 @@ gw.addEventListener('touchstart', function(e) {
   tyStart = e.touches[0].clientY;
 }, { passive: true });
 
-/* Blokuje pionowy scroll strony gdy gest jest poziomy */
 gw.addEventListener('touchmove', function(e) {
   if (txStart === null) return;
   var dx = Math.abs(e.touches[0].clientX - txStart);
@@ -689,93 +690,339 @@ gw.addEventListener('touchend', function(e) {
   txStart = null;
 }, { passive: true });
 
-// ===================== COVER ART — DUNGEON CRAWLER =====================
-function drawDungeonCover(canvas) {
+// ===================== COVER ART — DUNGEON CRAWLER (AD&D scene) =====================
+function drawDungeonCover(canvas, alive) {
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height, t = Date.now() / 1000;
+  alive = alive || 0;
 
-  ctx.fillStyle = '#05000d'; ctx.fillRect(0, 0, W, H);
+  // --- Background: stone dungeon wall ---
+  ctx.fillStyle = '#090508'; ctx.fillRect(0, 0, W, H);
 
-  var glow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.65);
-  glow.addColorStop(0, 'rgba(120,0,0,' + (0.35 + 0.1*Math.sin(t*1.2)) + ')');
-  glow.addColorStop(0.4, 'rgba(60,0,20,0.2)');
-  glow.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
-
-  var CELL = 16, CG = Math.floor(W/CELL)+1, RG = Math.floor(H/CELL)+1;
-  ctx.font = (CELL-2)+'px "Courier New",monospace';
-  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-
-  for (var row = 0; row < RG; row++) {
-    for (var col = 0; col < CG; col++) {
-      var h = (col*73 + row*37 + col*row*5) % 100;
-      var cx = col*CELL + CELL/2, cy = row*CELL + CELL/2;
-      var dx = (cx-W/2)/(W/2), dy = (cy-H/2)/(H/2);
-      var fa = Math.max(0, 1 - Math.sqrt(dx*dx+dy*dy)*1.1);
-      if (h < 35) {
-        var b = 20+(h%15);
-        ctx.fillStyle = 'rgba('+(b+15)+','+b+','+(b+5)+','+(fa*0.9)+')';
-        ctx.fillText(['\u2593','\u2592','\u2591','\u2592'][h%4], cx, cy);
-      } else if (h < 40) {
-        var p2 = 0.5+0.5*Math.sin(t*2+col*0.5+row*0.3);
-        ctx.fillStyle = 'rgba(200,40,40,'+(fa*(0.5+p2*0.5))+')';
-        ctx.fillText(['g','s','t','B'][h%4], cx, cy);
-      } else if (h < 43) {
-        var p3 = 0.5+0.5*Math.sin(t*3+col+row);
-        ctx.fillStyle = 'rgba(220,180,0,'+(fa*(0.4+p3*0.4))+')';
-        ctx.fillText('$', cx, cy);
-      } else if (h < 45) {
-        ctx.fillStyle = 'rgba(180,180,255,'+(fa*0.6)+')';
-        ctx.fillText('>', cx, cy);
-      } else {
-        var fl = 15+(h%12);
-        ctx.fillStyle = 'rgba('+(fl+5)+','+fl+','+(fl-3)+','+(fa*0.6)+')';
-        ctx.fillText(['.','  ','  ',"'",'  '][h%5], cx, cy);
-      }
+  // Stone blocks
+  var bW = 38, bH = 19;
+  for (var row = 0; row < Math.ceil(H / bH) + 1; row++) {
+    for (var col = 0; col < Math.ceil(W / bW) + 1; col++) {
+      var offX = (row % 2 === 0) ? 0 : bW / 2;
+      var bx = col * bW - offX, by = row * bH;
+      var v = ((col * 19 + row * 37) % 14);
+      var base = 18 + v + (alive > 0 ? alive * 8 : 0);
+      ctx.fillStyle = 'rgb(' + Math.round(base) + ',' + Math.round(base - 2) + ',' + Math.round(base + 3) + ')';
+      ctx.fillRect(bx + 1, by + 1, bW - 2, bH - 2);
     }
   }
 
-  var hx = W/2, hy = H/2+10;
-  var hp = 0.7+0.3*Math.sin(t*2.5);
-  var hg = ctx.createRadialGradient(hx, hy, 0, hx, hy, 30);
-  hg.addColorStop(0, 'rgba(0,255,100,'+(0.3*hp)+')');
-  hg.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = hg; ctx.fillRect(hx-35, hy-35, 70, 70);
-  ctx.font = 'bold 22px "Courier New",monospace';
-  ctx.fillStyle = 'rgba(0,255,100,'+hp+')';
-  ctx.fillText('@', hx, hy);
+  // --- Torch (upper right) ---
+  var torchX = W * 0.84, torchY = H * 0.2;
+  var flicker = 0.85 + 0.15 * Math.sin(t * 8.1 + 1.3) + alive * 0.3;
+  // Torch glow lamp
+  var lamp = ctx.createRadialGradient(torchX, torchY, 0, torchX, torchY, 70 * flicker);
+  lamp.addColorStop(0, 'rgba(255,190,70,' + (0.55 * flicker) + ')');
+  lamp.addColorStop(0.45, 'rgba(180,90,15,' + (0.22 * flicker) + ')');
+  lamp.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = lamp; ctx.fillRect(0, 0, W, H);
+  // Torch stick
+  ctx.strokeStyle = '#6a3a12'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(torchX, torchY + 22); ctx.lineTo(torchX, torchY + 8); ctx.stroke();
+  // Flame shape
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(torchX, torchY + 8);
+  ctx.quadraticCurveTo(torchX + 5 * flicker, torchY - 2, torchX, torchY - 12 - alive * 8);
+  ctx.quadraticCurveTo(torchX - 5 * flicker, torchY - 2, torchX, torchY + 8);
+  var flame = ctx.createLinearGradient(torchX, torchY - 12, torchX, torchY + 8);
+  flame.addColorStop(0, 'rgba(255,230,120,' + Math.min(1, 0.95 + alive * 0.3) + ')');
+  flame.addColorStop(0.6, 'rgba(255,120,20,0.85)');
+  flame.addColorStop(1, 'rgba(200,50,0,0.7)');
+  ctx.fillStyle = flame; ctx.fill();
+  ctx.restore();
+
+  // Ambient flash during alive
+  if (alive > 0) {
+    ctx.fillStyle = 'rgba(255,210,100,' + (alive * 0.28) + ')';
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // --- Floor shadow ---
+  var floor = ctx.createLinearGradient(0, H * 0.58, 0, H);
+  floor.addColorStop(0, 'rgba(0,0,0,0)');
+  floor.addColorStop(1, 'rgba(0,0,0,0.72)');
+  ctx.fillStyle = floor; ctx.fillRect(0, H * 0.58, W, H * 0.42);
+
+  // ===== SKELETON (right side) =====
+  var sx = W * 0.67, sy = H * 0.52;
+  var skelBob = Math.sin(t * 1.7) * 2.5;
+  var boneCol = alive > 0 ? 'rgba(245,235,200,0.95)' : 'rgba(195,188,168,0.85)';
+
+  // Skull
+  ctx.beginPath();
+  ctx.ellipse(sx, sy - 47 + skelBob, 9.5, 10, 0, 0, Math.PI * 2);
+  ctx.fillStyle = alive > 0 ? 'rgba(235,225,195,0.92)' : 'rgba(205,195,172,0.82)';
+  ctx.fill();
+  ctx.strokeStyle = boneCol; ctx.lineWidth = 1.2;
+  ctx.stroke();
+  // Jaw
+  ctx.beginPath();
+  ctx.moveTo(sx - 6, sy - 40 + skelBob);
+  ctx.quadraticCurveTo(sx, sy - 36 + skelBob, sx + 6, sy - 40 + skelBob);
+  ctx.strokeStyle = boneCol; ctx.lineWidth = 1.5; ctx.stroke();
+  // Teeth marks
+  for (var ti = -2; ti <= 2; ti++) {
+    ctx.beginPath();
+    ctx.moveTo(sx + ti * 2.2, sy - 40 + skelBob);
+    ctx.lineTo(sx + ti * 2.2, sy - 37.5 + skelBob);
+    ctx.strokeStyle = '#0a0508'; ctx.lineWidth = 1; ctx.stroke();
+  }
+  // Eye sockets
+  ctx.fillStyle = alive > 0 ? 'rgba(255,20,0,0.8)' : '#0f0508';
+  ctx.beginPath(); ctx.ellipse(sx - 3.5, sy - 49 + skelBob, 3, 2.5, -0.2, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(sx + 3.5, sy - 49 + skelBob, 3, 2.5, 0.2, 0, Math.PI * 2); ctx.fill();
+  // Spine / ribcage
+  ctx.strokeStyle = boneCol; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(sx, sy - 37 + skelBob); ctx.lineTo(sx, sy - 16 + skelBob); ctx.stroke();
+  for (var ri = 0; ri < 3; ri++) {
+    var ry = sy - 34 + ri * 6.5 + skelBob;
+    ctx.beginPath(); ctx.moveTo(sx, ry);
+    ctx.quadraticCurveTo(sx - 11, ry + 2, sx - 9.5, ry + 7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sx, ry);
+    ctx.quadraticCurveTo(sx + 11, ry + 2, sx + 9.5, ry + 7); ctx.stroke();
+  }
+  // Pelvis
+  ctx.beginPath();
+  ctx.moveTo(sx - 10, sy - 16 + skelBob);
+  ctx.quadraticCurveTo(sx, sy - 12 + skelBob, sx + 10, sy - 16 + skelBob);
+  ctx.strokeStyle = boneCol; ctx.lineWidth = 2; ctx.stroke();
+  // Left arm
+  ctx.beginPath();
+  ctx.moveTo(sx - 8, sy - 32 + skelBob);
+  ctx.lineTo(sx - 14, sy - 19 + skelBob);
+  ctx.lineTo(sx - 10, sy - 8 + skelBob);
+  ctx.strokeStyle = boneCol; ctx.lineWidth = 2.2; ctx.stroke();
+  // Right arm (raised weapon)
+  var skelSwing = alive > 0 ? -(0.4 + alive * 0.9) : 0.25 * Math.sin(t * 1.3);
+  ctx.save();
+  ctx.translate(sx + 8, sy - 31 + skelBob);
+  ctx.rotate(skelSwing);
+  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(10, 18); ctx.strokeStyle = boneCol; ctx.lineWidth = 2.2; ctx.stroke();
+  // Bone club / scimitar
+  ctx.strokeStyle = alive > 0 ? 'rgba(210,200,175,0.95)' : 'rgba(195,185,160,0.85)';
+  ctx.lineWidth = 3; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(8, 15); ctx.lineTo(18, 33); ctx.stroke();
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.arc(14, 24, 5, -0.5, 1.8); ctx.stroke();
+  ctx.restore();
+  // Legs
+  ctx.strokeStyle = boneCol; ctx.lineWidth = 2.2;
+  ctx.beginPath(); ctx.moveTo(sx - 3, sy - 16 + skelBob); ctx.lineTo(sx - 8, sy + 6 + skelBob); ctx.lineTo(sx - 5, sy + 24 + skelBob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx + 3, sy - 16 + skelBob); ctx.lineTo(sx + 8, sy + 6 + skelBob); ctx.lineTo(sx + 5, sy + 24 + skelBob); ctx.stroke();
+  // Foot bones
+  ctx.lineWidth = 1.8;
+  ctx.beginPath(); ctx.moveTo(sx - 5, sy + 24 + skelBob); ctx.lineTo(sx - 11, sy + 26 + skelBob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(sx + 5, sy + 24 + skelBob); ctx.lineTo(sx + 11, sy + 26 + skelBob); ctx.stroke();
+
+  // ===== BARBARIAN (left side) =====
+  var bpx = W * 0.31, bpy = H * 0.5;
+  var barbBob = -Math.sin(t * 1.7) * 2.5; // opposite phase
+  var skinCol = alive > 0 ? '#d08860' : '#b07848';
+  var armorCol = alive > 0 ? '#942020' : '#721818';
+
+  // Boots / legs
+  ctx.fillStyle = '#2a1406';
+  ctx.beginPath(); ctx.roundRect(bpx - 11, bpy + 4 + barbBob, 9, 22, 2); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(bpx + 2, bpy + 4 + barbBob, 9, 22, 2); ctx.fill();
+  // Boot highlights
+  ctx.fillStyle = '#3a1e0a';
+  ctx.fillRect(bpx - 10, bpy + 5 + barbBob, 3, 18);
+  ctx.fillRect(bpx + 3, bpy + 5 + barbBob, 3, 18);
+
+  // Torso (leather/cloth)
+  ctx.fillStyle = armorCol;
+  ctx.beginPath();
+  ctx.moveTo(bpx - 14, bpy + 4 + barbBob);
+  ctx.lineTo(bpx + 14, bpy + 4 + barbBob);
+  ctx.lineTo(bpx + 12, bpy - 25 + barbBob);
+  ctx.lineTo(bpx - 12, bpy - 25 + barbBob);
+  ctx.closePath(); ctx.fill();
+  // Torso detail lines
+  ctx.strokeStyle = 'rgba(160,40,40,0.6)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(bpx, bpy - 24 + barbBob); ctx.lineTo(bpx, bpy + 3 + barbBob); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(bpx - 8, bpy - 12 + barbBob); ctx.lineTo(bpx + 8, bpy - 12 + barbBob); ctx.stroke();
+
+  // Pauldrons (shoulder guards)
+  ctx.fillStyle = '#708090';
+  ctx.beginPath(); ctx.ellipse(bpx - 14, bpy - 22 + barbBob, 8, 7, -0.3, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(bpx + 14, bpy - 22 + barbBob, 8, 7, 0.3, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#505a68'; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.ellipse(bpx - 14, bpy - 22 + barbBob, 8, 7, -0.3, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(bpx + 14, bpy - 22 + barbBob, 8, 7, 0.3, 0, Math.PI * 2); ctx.stroke();
+  // Rivets on pauldrons
+  ctx.fillStyle = '#909aa8';
+  ctx.beginPath(); ctx.arc(bpx - 17, bpy - 24 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(bpx - 11, bpy - 21 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(bpx + 17, bpy - 24 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(bpx + 11, bpy - 21 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
+
+  // Left arm + shield
+  ctx.fillStyle = skinCol;
+  ctx.save();
+  ctx.translate(bpx - 13, bpy - 25 + barbBob);
+  ctx.rotate(0.25);
+  ctx.beginPath(); ctx.roundRect(-4, 0, 8, 16, 3); ctx.fillStyle = skinCol; ctx.fill();
+  // Shield
+  ctx.save(); ctx.translate(-12, 10);
+  ctx.fillStyle = alive > 0 ? '#5a2e08' : '#3e2008';
+  ctx.beginPath();
+  ctx.moveTo(0, -13); ctx.lineTo(11, -5); ctx.lineTo(11, 7); ctx.lineTo(0, 14); ctx.lineTo(-11, 7); ctx.lineTo(-11, -5);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#8a6020'; ctx.lineWidth = 2; ctx.stroke();
+  // Shield boss (center knob)
+  ctx.fillStyle = '#c0a028';
+  ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI * 2); ctx.fill();
+  // Shield cross lines
+  ctx.strokeStyle = 'rgba(180,140,40,0.5)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(0, 10); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(-9, 0); ctx.lineTo(9, 0); ctx.stroke();
+  ctx.restore();
+  ctx.restore();
+
+  // Right arm (swinging axe)
+  var axeSwing = alive > 0 ? -1.15 - alive * 0.5 : -0.25 + 0.18 * Math.sin(t * 1.5);
+  ctx.save();
+  ctx.translate(bpx + 13, bpy - 25 + barbBob);
+  ctx.rotate(axeSwing);
+  // Arm
+  ctx.fillStyle = skinCol;
+  ctx.beginPath(); ctx.roundRect(-4, 0, 8, 18, 3); ctx.fill();
+  // Axe handle
+  ctx.strokeStyle = '#5a3010'; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(0, 8); ctx.lineTo(4, 30); ctx.stroke();
+  // Axe head (battle axe)
+  var axeCol = alive > 0 ? 'rgba(210,228,255,0.97)' : 'rgba(180,195,220,0.88)';
+  ctx.fillStyle = axeCol;
+  ctx.strokeStyle = '#5878a0'; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(-1, 0);
+  ctx.quadraticCurveTo(-20, -8, -18, 6);
+  ctx.quadraticCurveTo(-16, 18, -1, 14);
+  ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  // Axe edge glint
+  ctx.strokeStyle = alive > 0 ? 'rgba(240,250,255,0.95)' : 'rgba(220,235,255,0.6)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(-18, 0); ctx.lineTo(-10, 12); ctx.stroke();
+  if (alive > 0) {
+    ctx.strokeStyle = 'rgba(255,255,255,' + alive + ')';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(-20, -2); ctx.lineTo(-12, 14); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Head / helmet
+  ctx.fillStyle = '#6a7888';
+  ctx.beginPath(); ctx.ellipse(bpx, bpy - 35 + barbBob, 11, 12, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#4a5868'; ctx.lineWidth = 1.3; ctx.stroke();
+  // Helmet nasal guard
+  ctx.fillStyle = '#788898';
+  ctx.beginPath(); ctx.roundRect(bpx - 2.5, bpy - 36 + barbBob, 5, 10, 1); ctx.fill();
+  // Helmet rim / brow bar
+  ctx.fillStyle = '#808e9e';
+  ctx.beginPath(); ctx.roundRect(bpx - 12, bpy - 28 + barbBob, 24, 4, 2); ctx.fill();
+  // Helmet cheek guards
+  ctx.fillStyle = '#6a7888';
+  ctx.beginPath(); ctx.roundRect(bpx - 12, bpy - 28 + barbBob, 5, 8, 1); ctx.fill();
+  ctx.beginPath(); ctx.roundRect(bpx + 7, bpy - 28 + barbBob, 5, 8, 1); ctx.fill();
+  // Eyes glow (fierce warrior)
+  var eyeAlpha = alive > 0 ? Math.min(1, 0.7 + alive * 0.5) : 0.5 + 0.15 * Math.sin(t * 2.5);
+  ctx.fillStyle = 'rgba(255,' + Math.round(80 + alive * 60) + ',0,' + eyeAlpha + ')';
+  ctx.beginPath(); ctx.ellipse(bpx - 4, bpy - 35 + barbBob, 2.5, 1.8, -0.1, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(bpx + 4, bpy - 35 + barbBob, 2.5, 1.8, 0.1, 0, Math.PI * 2); ctx.fill();
+  // Beard
+  ctx.strokeStyle = alive > 0 ? '#c88040' : '#9a6030';
+  ctx.lineWidth = 1.8; ctx.lineCap = 'round';
+  for (var bd = -3; bd <= 3; bd++) {
+    ctx.beginPath();
+    ctx.moveTo(bpx + bd * 1.8, bpy - 24 + barbBob);
+    ctx.quadraticCurveTo(bpx + bd * 2.2, bpy - 19 + barbBob, bpx + bd * 1.6 + (bd < 0 ? -1 : bd > 0 ? 1 : 0), bpy - 16 + barbBob);
+    ctx.stroke();
+  }
+
+  // ===== CLASH SPARKS (alive effect) =====
+  if (alive > 0) {
+    var clashX = (bpx + sx) / 2 + 5;
+    var clashY = (bpy + sy) / 2 - 22;
+    // Central flash
+    var cg = ctx.createRadialGradient(clashX, clashY, 0, clashX, clashY, 30 * alive);
+    cg.addColorStop(0, 'rgba(255,255,180,' + Math.min(1, alive * 0.9) + ')');
+    cg.addColorStop(0.4, 'rgba(255,160,20,' + (alive * 0.5) + ')');
+    cg.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = cg;
+    ctx.fillRect(clashX - 35, clashY - 35, 70, 70);
+    // Sparks
+    for (var sp = 0; sp < 10; sp++) {
+      var ang = (sp / 10) * Math.PI * 2 + t * 6;
+      var dist = (12 + sp * 4) * alive;
+      var spx = clashX + Math.cos(ang) * dist;
+      var spy = clashY + Math.sin(ang) * dist;
+      var spAlpha = Math.max(0, alive - sp * 0.06);
+      ctx.fillStyle = sp % 3 === 0 ? 'rgba(255,255,100,' + spAlpha + ')' :
+                      sp % 3 === 1 ? 'rgba(255,180,20,' + spAlpha + ')' :
+                                     'rgba(255,80,0,' + spAlpha + ')';
+      var spR = (2.5 - sp * 0.15) * alive;
+      if (spR > 0) { ctx.beginPath(); ctx.arc(spx, spy, spR, 0, Math.PI * 2); ctx.fill(); }
+    }
+    // Streak lines
+    ctx.lineCap = 'round';
+    for (var sl = 0; sl < 6; sl++) {
+      var slAng = (sl / 6) * Math.PI * 2 + 0.3;
+      var slLen = (8 + sl * 3) * alive;
+      ctx.strokeStyle = 'rgba(255,220,80,' + (alive * 0.7) + ')';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(clashX, clashY);
+      ctx.lineTo(clashX + Math.cos(slAng) * slLen, clashY + Math.sin(slAng) * slLen);
+      ctx.stroke();
+    }
+  }
+
+  // Title bar at top
   ctx.font = 'bold 11px "Courier New",monospace';
-  ctx.fillStyle = 'rgba(180,0,0,0.7)';
-  ctx.fillText('\u2550\u2550\u2550 DUNGEON CRAWLER \u2550\u2550\u2550', W/2, 14);
-  var bf = ctx.createLinearGradient(0, H*0.55, 0, H);
-  bf.addColorStop(0,'rgba(5,0,13,0)'); bf.addColorStop(1,'rgba(5,0,13,0.95)');
-  ctx.fillStyle = bf; ctx.fillRect(0, H*0.55, W, H*0.45);
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(160,20,20,0.85)';
+  ctx.fillText('\u2550\u2550\u2550 DUNGEON CRAWLER \u2550\u2550\u2550', W / 2, 13);
+
+  // Bottom gradient fade (for card overlay text)
+  var bf = ctx.createLinearGradient(0, H * 0.52, 0, H);
+  bf.addColorStop(0, 'rgba(5,0,13,0)');
+  bf.addColorStop(1, 'rgba(5,0,13,0.95)');
+  ctx.fillStyle = bf; ctx.fillRect(0, H * 0.52, W, H * 0.48);
 }
 
 // ===================== COVER ART — MYSTERY =====================
 function drawMysteryCover(canvas, variant) {
   var ctx = canvas.getContext('2d');
-  var W = canvas.width, H = canvas.height, t = Date.now()/1000;
+  var W = canvas.width, H = canvas.height, t = Date.now() / 1000;
   ctx.fillStyle = '#050508'; ctx.fillRect(0, 0, W, H);
-  var g = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.7);
-  g.addColorStop(0, variant===1 ? 'rgba(0,30,80,0.3)' : 'rgba(0,60,30,0.25)');
+  var g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.7);
+  g.addColorStop(0, variant === 1 ? 'rgba(0,30,80,0.3)' : 'rgba(0,60,30,0.25)');
   g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
-  var pulse = 0.5+0.5*Math.sin(t*1.5);
+  var pulse = 0.5 + 0.5 * Math.sin(t * 1.5);
   ctx.font = 'bold 72px "Courier New",monospace';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillStyle = 'rgba(80,80,100,'+(0.15+pulse*0.1)+')';
-  ctx.fillText('?', W/2, H/2-10);
-  var bf = ctx.createLinearGradient(0, H*0.5, 0, H);
-  bf.addColorStop(0,'rgba(5,5,8,0)'); bf.addColorStop(1,'rgba(5,5,8,0.95)');
-  ctx.fillStyle = bf; ctx.fillRect(0, H*0.5, W, H*0.5);
+  ctx.fillStyle = 'rgba(80,80,100,' + (0.15 + pulse * 0.1) + ')';
+  ctx.fillText('?', W / 2, H / 2 - 10);
+  var bf = ctx.createLinearGradient(0, H * 0.5, 0, H);
+  bf.addColorStop(0, 'rgba(5,5,8,0)'); bf.addColorStop(1, 'rgba(5,5,8,0.95)');
+  ctx.fillStyle = bf; ctx.fillRect(0, H * 0.5, W, H * 0.5);
 }
 
-// ===================== P\u0118TLA ANIMACJI =====================
+// ===================== PĘTLA ANIMACJI =====================
 function renderFrame() {
-  var c0=document.getElementById('cover-0'); if(c0) drawDungeonCover(c0);
-  var c1=document.getElementById('cover-1'); if(c1) drawMysteryCover(c1,1);
-  var c2=document.getElementById('cover-2'); if(c2) drawMysteryCover(c2,2);
+  if (dungeonAliveTimer > 0) dungeonAliveTimer--;
+  var aliveVal = dungeonAliveTimer / 65;
+  var c0 = document.getElementById('cover-0'); if (c0) drawDungeonCover(c0, aliveVal);
+  var c1 = document.getElementById('cover-1'); if (c1) drawMysteryCover(c1, 1);
+  var c2 = document.getElementById('cover-2'); if (c2) drawMysteryCover(c2, 2);
   requestAnimationFrame(renderFrame);
 }
 

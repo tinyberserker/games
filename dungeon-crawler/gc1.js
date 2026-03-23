@@ -229,11 +229,23 @@ const BOSSES = [
 // ===================== STAN GRY =====================
 let game = {};
 
+// Mnożniki trudności:
+//   enemyHp  — ile razy wrogowie mają więcej HP niż w trybie normalnym
+//   enemyAtk — ile razy wrogowie zadają więcej obrażeń
+//   hp       — startowe HP gracza
+//   atk      — startowy atak gracza
+//   potions  — startowa liczba mikstur
+//
+// Analiza balansu (floor 1, boss Smok bazowy 60hp/15atk):
+//   Łatwy:    Smok 36hp/9atk  → gracz 130hp 10atk → ~4 uderzenia, -36 obrażeń  → łatwe
+//   Normalny: Smok 60hp/15atk → gracz 100hp  8atk → ~8 uderzeń,  -120 obrażeń  → wymagające
+//   Trudny:   Smok 78hp/18atk → gracz  90hp  8atk → ~10 uderzeń, -180 obrażeń  → ciężkie ale wykonalne
+//   Niemożliwy: Smok 108hp/22atk→gracz 65hp  7atk → ekstremalnie trudne, wymaga perfekcji
 const DIFF_SETTINGS = {
   1: { enemyHp:0.6, enemyAtk:0.6, hp:130, atk:10, potions:3 },
   2: { enemyHp:1.0, enemyAtk:1.0, hp:100, atk:8,  potions:3 },
-  3: { enemyHp:1.6, enemyAtk:1.5, hp:75,  atk:7,  potions:2 },
-  4: { enemyHp:2.8, enemyAtk:2.5, hp:50,  atk:6,  potions:1 },
+  3: { enemyHp:1.3, enemyAtk:1.2, hp:90,  atk:8,  potions:2 },
+  4: { enemyHp:1.8, enemyAtk:1.5, hp:65,  atk:7,  potions:1 },
 };
 
 function newPlayer() {

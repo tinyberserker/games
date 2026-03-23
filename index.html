@@ -467,7 +467,10 @@ function triggerAlive(index) {
 
 var audioCtx = null;
 function ensureAudio() {
-  if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 }
 function playNavSound() {
   ensureAudio(); if (!audioCtx) return;

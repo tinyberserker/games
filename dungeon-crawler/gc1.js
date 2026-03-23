@@ -67,10 +67,10 @@ const LANG = {
     mode_keyboard:'[ K ]  Tryb klawiatury',
     mode_keyboard_sub:'AWSD / strzałki',
     diff_choose:'Wybierz poziom trudności',
-    diff_1:'[ 1 ]  Łatwy',       diff_1_sub:'więcej HP, słabsi wrogowie',
-    diff_2:'[ 2 ]  Zwykły',      diff_2_sub:'standardowe statystyki',
-    diff_3:'[ 3 ]  Trudny',      diff_3_sub:'mniej HP, silniejsi wrogowie',
-    diff_4:'[ 4 ]  Niemożliwy',  diff_4_sub:'ekstremalnie silni wrogowie',
+    diff_1:'[ 1 ]  Łatwy',       diff_1_sub:'słabsi wrogowie, 3 życia',
+    diff_2:'[ 2 ]  Zwykły',      diff_2_sub:'standardowe statystyki, 2 życia',
+    diff_3:'[ 3 ]  Trudny',      diff_3_sub:'silniejsi wrogowie, 1 życie',
+    diff_4:'[ 4 ]  Niemożliwy',  diff_4_sub:'ekstremalnie trudne, 1 życie',
     msg_crit: (d)=>`KRYTYK! +${d} obrażeń!`,
     msg_trap: (d)=>`Pułapka! -${d} HP!`,
     msg_chest_gold: (g)=>`Skrzynia! +${g} złota!`,
@@ -155,10 +155,10 @@ const LANG = {
     mode_keyboard:'[ K ]  Keyboard mode',
     mode_keyboard_sub:'AWSD / arrows',
     diff_choose:'Choose difficulty',
-    diff_1:'[ 1 ]  Easy',        diff_1_sub:'more HP, weaker enemies',
-    diff_2:'[ 2 ]  Normal',      diff_2_sub:'standard stats',
-    diff_3:'[ 3 ]  Hard',        diff_3_sub:'less HP, stronger enemies',
-    diff_4:'[ 4 ]  Impossible',  diff_4_sub:'extremely strong enemies',
+    diff_1:'[ 1 ]  Easy',        diff_1_sub:'weaker enemies, 3 lives',
+    diff_2:'[ 2 ]  Normal',      diff_2_sub:'standard stats, 2 lives',
+    diff_3:'[ 3 ]  Hard',        diff_3_sub:'stronger enemies, 1 life',
+    diff_4:'[ 4 ]  Impossible',  diff_4_sub:'extremely hard, 1 life',
     msg_crit: (d)=>`CRIT! +${d} damage!`,
     msg_trap: (d)=>`Trap! -${d} HP!`,
     msg_chest_gold: (g)=>`Chest! +${g} gold!`,
@@ -230,22 +230,27 @@ const BOSSES = [
 let game = {};
 
 // Mnożniki trudności:
-//   enemyHp  — ile razy wrogowie mają więcej HP niż w trybie normalnym
-//   enemyAtk — ile razy wrogowie zadają więcej obrażeń
+//   enemyHp  — mnożnik HP wrogów względem wartości bazowej
+//   enemyAtk — mnożnik ATK wrogów
 //   hp       — startowe HP gracza
 //   atk      — startowy atak gracza
 //   potions  — startowa liczba mikstur
+//   lives    — liczba żyć (dodatkowe szanse)
 //
-// Analiza balansu (floor 1, boss Smok bazowy 60hp/15atk):
-//   Łatwy:    Smok 36hp/9atk  → gracz 130hp 10atk → ~4 uderzenia, -36 obrażeń  → łatwe
-//   Normalny: Smok 60hp/15atk → gracz 100hp  8atk → ~8 uderzeń,  -120 obrażeń  → wymagające
-//   Trudny:   Smok 78hp/18atk → gracz  90hp  8atk → ~10 uderzeń, -180 obrażeń  → ciężkie ale wykonalne
-//   Niemożliwy: Smok 108hp/22atk→gracz 65hp  7atk → ekstremalnie trudne, wymaga perfekcji
+// WAŻNE: Zwykli wrogowie (Goblin/Szkielet/Troll) dostają DODATKOWE skalowanie piętrem:
+//   floorScale = 1.0 + (piętro-1) * 0.20 → piętro 1: ×1.0, piętro 6: ×2.0
+//   Bossowie NIE dostają floor scale (już mają różne bazowe statystyki per piętro).
+//
+// Balans (normal, floor 1, boss Smok 60hp/15atk):
+//   Łatwy:     wrogowie ×0.65 HP/ATK, 130hp gracz, 3 życia → komfortowo
+//   Normalny:  wrogowie ×1.0,          100hp gracz, 2 życia → wymagające przez całą grę
+//   Trudny:    wrogowie ×1.3/1.2,       90hp gracz, 1 życie → napięte, wymaga strategii
+//   Niemożliwy: wrogowie ×1.8/1.5,      65hp gracz, 1 życie → ekstremalnie trudne
 const DIFF_SETTINGS = {
-  1: { enemyHp:0.6, enemyAtk:0.6, hp:130, atk:10, potions:3 },
-  2: { enemyHp:1.0, enemyAtk:1.0, hp:100, atk:8,  potions:3 },
-  3: { enemyHp:1.3, enemyAtk:1.2, hp:90,  atk:8,  potions:2 },
-  4: { enemyHp:1.8, enemyAtk:1.5, hp:65,  atk:7,  potions:1 },
+  1: { enemyHp:0.65, enemyAtk:0.65, hp:130, atk:10, potions:3, lives:3 },
+  2: { enemyHp:1.0,  enemyAtk:1.0,  hp:100, atk:8,  potions:3, lives:2 },
+  3: { enemyHp:1.3,  enemyAtk:1.2,  hp:90,  atk:8,  potions:2, lives:1 },
+  4: { enemyHp:1.8,  enemyAtk:1.5,  hp:65,  atk:7,  potions:1, lives:1 },
 };
 
 function newPlayer() {
@@ -254,9 +259,10 @@ function newPlayer() {
 }
 
 function initGame() {
+  const d0 = DIFF_SETTINGS[difficulty] || DIFF_SETTINGS[2];
   game = {
     floor: 1,
-    lives: 2,
+    lives: d0.lives,
     player: newPlayer(),
     grid: [], entities: [],
     messages: [],
@@ -342,9 +348,12 @@ function generateMap(floorNum) {
       if (!used.has(`${x},${y}`)) {
         const tmpl = ENEMIES[Math.floor(Math.random()*ENEMIES.length)];
         const ds = DIFF_SETTINGS[difficulty] || DIFF_SETTINGS[2];
+        // Skalowanie piętrem: +20% HP i ATK za każde piętro powyżej 1.
+        // Dzięki temu wrogowie pozostają wyzwaniem przez całą grę, nie tylko na floor 1.
+        const floorScale = 1.0 + (floorNum - 1) * 0.20;
         const e2 = clone(tmpl);
-        e2.hp = Math.round(e2.hp * ds.enemyHp);
-        e2.atk = Math.round(e2.atk * ds.enemyAtk);
+        e2.hp = Math.round(e2.hp * ds.enemyHp * floorScale);
+        e2.atk = Math.round(e2.atk * ds.enemyAtk * floorScale);
         entities.push({type:'enemy', x, y, spawnX:x, spawnY:y, ...e2});
         used.add(`${x},${y}`); break;
       }

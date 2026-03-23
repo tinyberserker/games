@@ -48,7 +48,6 @@
       pointer-events: none; z-index: 0;
     }
 
-    /* ===== HEADER ===== */
     #header {
       position: relative; z-index: 10;
       display: flex; align-items: center; justify-content: space-between;
@@ -57,32 +56,22 @@
       flex-shrink: 0;
     }
 
-    #logo-area {
-      display: flex; align-items: center; gap: 14px;
-    }
+    #logo-area { display: flex; align-items: center; gap: 14px; }
 
-    /* Logo — lewa strona */
     #berserker-logo {
       order: 1;
       width: 52px; height: 52px; flex-shrink: 0;
       animation: logoPulse 3.5s ease-in-out infinite;
       cursor: default;
     }
-    #berserker-logo svg {
-      width: 52px; height: 52px;
-      filter: drop-shadow(0 0 6px rgba(139,0,0,0.7));
-    }
+    #berserker-logo svg { width: 52px; height: 52px; filter: drop-shadow(0 0 6px rgba(139,0,0,0.7)); }
 
     @keyframes logoPulse {
       0%, 100% { filter: drop-shadow(0 0 6px rgba(139,0,0,0.6)); }
       50%       { filter: drop-shadow(0 0 18px rgba(200,20,20,0.95)); }
     }
 
-    /* Tytuł — prawa strona */
-    #title-text {
-      display: flex; flex-direction: column;
-      order: 2;
-    }
+    #title-text { display: flex; flex-direction: column; order: 2; }
 
     #title-main {
       font-family: 'Cinzel Decorative', serif;
@@ -99,12 +88,7 @@
     }
 
     #controls-hint { display: flex; gap: 12px; align-items: center; }
-
-    .hint-item {
-      display: flex; align-items: center; gap: 6px;
-      color: rgba(255,255,255,0.35); font-size: 12px; letter-spacing: 0.5px;
-    }
-
+    .hint-item { display: flex; align-items: center; gap: 6px; color: rgba(255,255,255,0.35); font-size: 12px; letter-spacing: 0.5px; }
     .hint-key {
       background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
       border-radius: 5px; padding: 2px 7px; font-size: 11px;
@@ -112,7 +96,6 @@
       box-shadow: 0 2px 0 rgba(0,0,0,0.4);
     }
 
-    /* ===== MAIN ===== */
     #main-area {
       position: relative; z-index: 10;
       flex: 1; display: flex; flex-direction: column;
@@ -148,7 +131,6 @@
       will-change: transform;
     }
 
-    /* ===== KAFELKI ===== */
     .game-card {
       flex-shrink: 0; width: 320px; height: 220px;
       position: relative; border-radius: 12px; overflow: hidden;
@@ -170,27 +152,23 @@
     }
     .game-card:not(.active):hover { filter: brightness(0.85) saturate(0.85); transform: scale(1.02); }
 
-    /* TŁO KAFELKA — SVG wypełniające całą przestrzeń */
     .cover-art {
       position: absolute; inset: 0;
       width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
       overflow: hidden;
     }
-    .cover-art svg {
+    .cover-art img {
       width: 100%; height: 100%;
       object-fit: cover;
+      display: block;
     }
 
-    /* Alive — 1s błysk przy wyborze kafelka */
     @keyframes cardAlive {
-      0%   { box-shadow: 0 0 0 2px rgba(192,132,252,0.5), 0 0 60px rgba(255,80,80,0.8), 0 0 120px rgba(200,30,30,0.5), inset 0 0 40px rgba(255,100,0,0.3); filter: brightness(1.5) saturate(1.4); }
-      40%  { box-shadow: 0 0 0 2px rgba(192,132,252,0.5), 0 0 40px rgba(192,132,252,0.6), 0 0 80px rgba(130,80,220,0.3), 0 20px 40px rgba(0,0,0,0.6); filter: brightness(1.1) saturate(1.1); }
-      100% { box-shadow: 0 0 0 2px rgba(192,132,252,0.3), 0 0 30px rgba(192,132,252,0.4), 0 0 60px rgba(130,80,220,0.2), 0 20px 40px rgba(0,0,0,0.6); filter: brightness(1) saturate(1); }
+      0%   { box-shadow: 0 0 0 2px rgba(192,132,252,0.5), 0 0 60px rgba(255,80,80,0.8), 0 0 120px rgba(200,30,30,0.5); filter: brightness(1.5) saturate(1.4); }
+      40%  { box-shadow: 0 0 0 2px rgba(192,132,252,0.5), 0 0 40px rgba(192,132,252,0.6), 0 0 80px rgba(130,80,220,0.3); filter: brightness(1.1) saturate(1.1); }
+      100% { box-shadow: 0 0 0 2px rgba(192,132,252,0.3), 0 0 30px rgba(192,132,252,0.4), 0 0 60px rgba(130,80,220,0.2); filter: brightness(1) saturate(1); }
     }
-    .game-card.alive {
-      animation: cardAlive 1s ease-out forwards !important;
-    }
+    .game-card.alive { animation: cardAlive 1s ease-out forwards !important; }
 
     .cover-canvas { width: 100%; height: 100%; display: block; }
 
@@ -217,13 +195,10 @@
     .game-card.placeholder { opacity: 0.4; cursor: not-allowed; }
     .game-card.placeholder:hover { filter: brightness(0.65) saturate(0.7); transform: none; }
 
-    /* ===== DOTY ===== */
     #nav-dots {
-      display: flex;
-      justify-content: center;
+      display: flex; justify-content: center;
       gap: 8px; z-index: 10;
-      padding: 10px 0 6px;
-      flex-shrink: 0;
+      padding: 10px 0 6px; flex-shrink: 0;
     }
     .nav-dot {
       width: 6px; height: 6px; border-radius: 50%;
@@ -231,22 +206,18 @@
     }
     .nav-dot.active { background: #c084fc; width: 20px; border-radius: 3px; box-shadow: 0 0 8px rgba(192,132,252,0.6); }
 
-    /* ===== DOLNY PANEL ===== */
     #info-panel {
       position: relative; z-index: 10;
-      padding: 0 48px 20px;
-      height: 130px;
+      padding: 0 48px 20px; height: 130px;
       flex-shrink: 0;
       display: flex; flex-direction: column; justify-content: flex-end;
     }
-
     #game-description {
       max-width: 700px;
       opacity: 0; transform: translateY(8px);
       transition: opacity 0.35s ease, transform 0.35s ease;
     }
     #game-description.visible { opacity: 1; transform: translateY(0); }
-
     #desc-title {
       font-size: 20px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
       margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -255,10 +226,7 @@
       font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.55);
       max-width: 580px; height: 40px; overflow: hidden; margin-bottom: 10px;
     }
-    #desc-meta {
-      display: flex; align-items: center; gap: 20px;
-      height: 34px;
-    }
+    #desc-meta { display: flex; align-items: center; gap: 20px; height: 34px; }
     #desc-author { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; }
 
     #play-btn {
@@ -275,7 +243,6 @@
       box-shadow: 0 6px 25px rgba(124,58,237,0.6); transform: translateY(-1px);
     }
 
-    /* ===== STRZAŁKI ===== */
     .nav-arrow {
       position: absolute; top: 50%; transform: translateY(-50%);
       z-index: 20; width: 44px; height: 44px;
@@ -289,7 +256,6 @@
     #arrow-right { right: 10px; }
     .nav-arrow.hidden { opacity: 0; pointer-events: none; }
 
-    /* ===== FLASH ===== */
     #flash-msg {
       position: fixed; top: 20px; left: 50%;
       transform: translateX(-50%) translateY(-60px);
@@ -308,44 +274,42 @@
     #main-area  { animation: fadeInUp 0.6s ease 0.25s both; }
     #info-panel { animation: fadeInUp 0.6s ease 0.4s  both; }
 
-    /* ===== MOBILE PORTRAIT (≤600px) ===== */
     @media (max-width: 600px) {
       body { overflow: hidden; }
       #header { padding: 12px 16px 10px; }
       #title-main { font-size: 14px; letter-spacing: 1px; }
-      #title-sub  { font-size: 9px;  letter-spacing: 1px; }
+      #title-sub  { font-size: 9px; letter-spacing: 1px; }
       #berserker-logo { width: 36px; height: 36px; }
       #berserker-logo svg { width: 36px; height: 36px; }
-      #controls-hint  { display: none; }
+      #controls-hint { display: none; }
       #logo-area { gap: 10px; }
-      #section-label  { padding: 0 16px; margin-bottom: 10px; font-size: 10px; }
+      #section-label { padding: 0 16px; margin-bottom: 10px; font-size: 10px; }
       #gallery-wrapper { padding: 10px 0 6px; touch-action: pan-y; }
       #gallery-wrapper::before, #gallery-wrapper::after { width: 20px; }
       #gallery { gap: 14px; padding: 0 16px; }
-      .game-card  { width: 240px; height: 166px; }
+      .game-card { width: 240px; height: 166px; }
       .card-title { font-size: 14px; }
-      .card-author{ font-size: 10px; }
-      #info-panel   { padding: 0 16px 14px; height: 110px; }
-      #desc-title   { font-size: 15px; letter-spacing: 1px; }
-      #desc-text    { font-size: 11px; height: 33px; margin-bottom: 8px; }
-      #desc-meta    { height: 28px; gap: 10px; }
-      #play-btn     { font-size: 11px; padding: 6px 14px; letter-spacing: 1px; }
+      .card-author { font-size: 10px; }
+      #info-panel { padding: 0 16px 14px; height: 110px; }
+      #desc-title { font-size: 15px; letter-spacing: 1px; }
+      #desc-text  { font-size: 11px; height: 33px; margin-bottom: 8px; }
+      #desc-meta  { height: 28px; gap: 10px; }
+      #play-btn   { font-size: 11px; padding: 6px 14px; letter-spacing: 1px; }
       #nav-dots { padding: 6px 0 4px; }
-      .nav-dot  { width: 5px; height: 5px; }
+      .nav-dot { width: 5px; height: 5px; }
       .nav-dot.active { width: 14px; }
       .nav-arrow { width: 36px; height: 36px; font-size: 16px; }
       #arrow-left  { left: 4px; }
       #arrow-right { right: 4px; }
     }
 
-    /* ===== MOBILE LANDSCAPE ===== */
     @media (max-width: 900px) and (orientation: landscape) {
       #header { padding: 8px 24px 6px; }
       #title-main { font-size: 14px; letter-spacing: 1px; }
       #title-sub  { font-size: 9px; }
       #berserker-logo { width: 34px; height: 34px; }
       #berserker-logo svg { width: 34px; height: 34px; }
-      #controls-hint  { display: none; }
+      #controls-hint { display: none; }
       #section-label { margin-bottom: 8px; padding: 0 24px; font-size: 10px; }
       #gallery-wrapper { padding: 8px 0 6px; touch-action: pan-y; }
       #gallery { gap: 16px; padding: 0 24px; }
@@ -360,7 +324,6 @@
       .nav-arrow { width: 36px; height: 36px; }
     }
 
-    /* ===== TABLET PORTRAIT ===== */
     @media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
       #header { padding: 16px 32px 12px; }
       #title-main { font-size: 18px; letter-spacing: 2px; }
@@ -377,7 +340,6 @@
 
 <header id="header">
   <div id="logo-area">
-    <!-- Logo — ikona Dungeon Crawler (lewa strona) -->
     <div id="berserker-logo">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="52" height="52">
         <rect width="100" height="100" rx="15" fill="#1a0a2e"/>
@@ -399,23 +361,15 @@
         <circle cx="85" cy="55" r="1.5" fill="#FF4500" opacity="0.6"/>
       </svg>
     </div>
-    <!-- Tytuł — prawa strona -->
     <div id="title-text">
       <span id="title-main">Tinyberserker Games</span>
       <span id="title-sub">kolekcja gier &nbsp;&middot;&nbsp; tinyberserker</span>
     </div>
   </div>
-
   <div id="controls-hint">
-    <div class="hint-item">
-      <span class="hint-key">A</span><span class="hint-key">D</span><span>nawigacja</span>
-    </div>
-    <div class="hint-item">
-      <span class="hint-key">&larr;</span><span class="hint-key">&rarr;</span><span>nawigacja</span>
-    </div>
-    <div class="hint-item">
-      <span class="hint-key">Enter</span><span>graj</span>
-    </div>
+    <div class="hint-item"><span class="hint-key">A</span><span class="hint-key">D</span><span>nawigacja</span></div>
+    <div class="hint-item"><span class="hint-key">&larr;</span><span class="hint-key">&rarr;</span><span>nawigacja</span></div>
+    <div class="hint-item"><span class="hint-key">Enter</span><span>graj</span></div>
   </div>
 </header>
 
@@ -429,28 +383,10 @@
     <div class="nav-arrow"        id="arrow-right" onclick="navigate(1)">&#8250;</div>
 
     <div id="gallery">
-      <!-- KAFELEK 0: Dungeon Crawler — tło = ikona SVG -->
+      <!-- KAFELEK 0: Dungeon Crawler — tło = zdjęcie -->
       <div class="game-card active" id="card-0" onclick="enterGame(0)">
         <div class="cover-art">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
-            <rect width="100" height="100" rx="0" fill="#1a0a2e"/>
-            <rect x="3" y="3" width="94" height="94" rx="0" fill="none" stroke="#8B0000" stroke-width="2.5"/>
-            <line x1="50" y1="15" x2="50" y2="65" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
-            <line x1="36" y1="38" x2="64" y2="38" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
-            <rect x="46" y="62" width="8" height="14" rx="3" fill="#8B4513"/>
-            <line x1="50" y1="15" x2="53" y2="25" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
-            <ellipse cx="50" cy="82" rx="10" ry="8" fill="#e0d0a0"/>
-            <rect x="43" y="86" width="14" height="5" rx="1" fill="#e0d0a0"/>
-            <rect x="44" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
-            <rect x="49" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
-            <rect x="54" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
-            <ellipse cx="46" cy="81" rx="2.5" ry="2.5" fill="#1a0a2e"/>
-            <ellipse cx="54" cy="81" rx="2.5" ry="2.5" fill="#1a0a2e"/>
-            <circle cx="20" cy="20" r="2" fill="#FFD700" opacity="0.8"/>
-            <circle cx="80" cy="20" r="2" fill="#FFD700" opacity="0.8"/>
-            <circle cx="15" cy="55" r="1.5" fill="#FF4500" opacity="0.6"/>
-            <circle cx="85" cy="55" r="1.5" fill="#FF4500" opacity="0.6"/>
-          </svg>
+          <img src="dungeon-crawler/cover.jpg" alt="Dungeon Crawler">
         </div>
         <div class="card-badge badge-new">Graj</div>
         <div class="card-overlay">
@@ -508,36 +444,27 @@
 
 <script>
 var GAMES = [
-  {
-    id: 0, title: 'Dungeon Crawler', author: 'Jasiu', year: '2025',
-    description: 'Mroczna roguelike RPG \u2014 eksploruj lochy, bij potwory, zdobywaj z\u0142oto. 6 pi\u0119ter, 6 boss\u00f3w, sklep i zdolno\u015bci pasywne!',
-    url: 'dungeon-crawler/index.html', available: true,
-  },
-  {
-    id: 1, title: '??? Nieznana Gra', author: 'Jasiu', year: '???',
-    description: 'Tajemniczy projekt w fazie planowania\u2026 wr\u00f3\u0107 tutaj wkr\u00f3tce.',
-    url: null, available: false,
-  },
-  {
-    id: 2, title: '??? Projekt X', author: 'Jasiu', year: '???',
-    description: 'Co\u015b nowego jest w drodze. B\u0105d\u017a na bie\u017c\u0105co!',
-    url: null, available: false,
-  },
+  { id:0, title:'Dungeon Crawler', author:'Jasiu', year:'2025',
+    description:'Mroczna roguelike RPG \u2014 eksploruj lochy, bij potwory, zdobywaj z\u0142oto. 6 pi\u0119ter, 6 boss\u00f3w, sklep i zdolno\u015bci pasywne!',
+    url:'dungeon-crawler/index.html', available:true },
+  { id:1, title:'??? Nieznana Gra', author:'Jasiu', year:'???',
+    description:'Tajemniczy projekt w fazie planowania\u2026 wr\u00f3\u0107 tutaj wkr\u00f3tce.',
+    url:null, available:false },
+  { id:2, title:'??? Projekt X', author:'Jasiu', year:'???',
+    description:'Co\u015b nowego jest w drodze. B\u0105d\u017a na bie\u017c\u0105co!',
+    url:null, available:false },
 ];
-
 var currentIndex = 0;
 
-// ===== ALIVE FLASH =====
 function triggerAlive(index) {
   var card = document.getElementById('card-' + index);
   if (!card) return;
   card.classList.remove('alive');
-  void card.offsetWidth; // reflow
+  void card.offsetWidth;
   card.classList.add('alive');
   setTimeout(function() { card.classList.remove('alive'); }, 1050);
 }
 
-// ===== AUDIO =====
 var audioCtx = null;
 function ensureAudio() {
   if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
@@ -551,10 +478,8 @@ function playNavSound() {
       osc.connect(gain); gain.connect(audioCtx.destination);
       osc.type = 'triangle'; osc.frequency.value = freq;
       var s = t + i * 0.055;
-      gain.gain.setValueAtTime(0, s);
-      gain.gain.linearRampToValueAtTime(0.11, s + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.001, s + 0.15);
-      osc.start(s); osc.stop(s + 0.15);
+      gain.gain.setValueAtTime(0, s); gain.gain.linearRampToValueAtTime(0.11, s+0.012); gain.gain.exponentialRampToValueAtTime(0.001, s+0.15);
+      osc.start(s); osc.stop(s+0.15);
     });
   } catch(e) {}
 }
@@ -567,15 +492,12 @@ function playSelectSound() {
       osc.connect(gain); gain.connect(audioCtx.destination);
       osc.type = 'triangle'; osc.frequency.value = freq;
       var s = t + i * 0.07;
-      gain.gain.setValueAtTime(0, s);
-      gain.gain.linearRampToValueAtTime(0.10, s + 0.012);
-      gain.gain.exponentialRampToValueAtTime(0.001, s + 0.22);
-      osc.start(s); osc.stop(s + 0.22);
+      gain.gain.setValueAtTime(0, s); gain.gain.linearRampToValueAtTime(0.10, s+0.012); gain.gain.exponentialRampToValueAtTime(0.001, s+0.22);
+      osc.start(s); osc.stop(s+0.22);
     });
   } catch(e) {}
 }
 
-// ===== NAWIGACJA =====
 function navigate(dir) {
   var ni = currentIndex + dir;
   if (ni < 0 || ni >= GAMES.length) return;
@@ -646,7 +568,6 @@ function showFlash(msg) {
   el._t = setTimeout(function() { el.classList.remove('show'); }, 2200);
 }
 
-// ===== KLAWIATURA =====
 document.addEventListener('keydown', function(e) {
   switch(e.key) {
     case 'ArrowLeft':  case 'a': case 'A': e.preventDefault(); navigate(-1); break;
@@ -655,7 +576,6 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ===== TOUCH =====
 var txStart = null, tyStart = null;
 var gw = document.getElementById('gallery-wrapper');
 gw.addEventListener('touchstart', function(e) { txStart = e.touches[0].clientX; tyStart = e.touches[0].clientY; }, { passive: true });
@@ -665,13 +585,11 @@ gw.addEventListener('touchmove', function(e) {
 }, { passive: false });
 gw.addEventListener('touchend', function(e) {
   if (txStart === null) return;
-  var dx = e.changedTouches[0].clientX - txStart;
-  var dy = e.changedTouches[0].clientY - tyStart;
+  var dx = e.changedTouches[0].clientX - txStart, dy = e.changedTouches[0].clientY - tyStart;
   if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 38) navigate(dx < 0 ? 1 : -1);
   txStart = null;
 }, { passive: true });
 
-// ===== MYSTERY COVERS =====
 function drawMysteryCover(canvas, variant) {
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height, t = Date.now() / 1000;
@@ -696,7 +614,6 @@ function renderFrame() {
   requestAnimationFrame(renderFrame);
 }
 
-// ===== INIT =====
 function init() {
   updateGalleryTransform();
   updateInfoPanel();

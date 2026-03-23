@@ -2,7 +2,9 @@
 let lang = 'pl';
 const LANG = {
   pl: {
-    names: {Goblin:'Goblin',Szkielet:'Szkielet',Troll:'Troll',Smok:'Smok',Demon:'Demon',Lich:'Lich',Wampir:'Wampir',Golem:'Golem','Mroczny Bóg':'Mroczny Bóg'},
+    names: {Goblin:'Goblin',Szkielet:'Szkielet',Troll:'Troll',Smok:'Smok',Demon:'Demon',Lich:'Lich',Wampir:'Wampir',Golem:'Golem','Mroczny Bóg':'Mroczny Bóg',
+      'Upiór':'Upiór','Bazyliszek':'Bazyliszek','Rycerz':'Rycerz',
+      'Cerber':'Cerber','Hydra':'Hydra','Gorgona':'Gorgona','Feniks':'Feniks','Lewiatan':'Lewiatan','Śmierć':'Śmierć'},
     h_enemies:'⚔ WROGOWIE', h_bosses:'👑 BOSSOWIE', h_controls:'🎮 STEROWANIE', h_legend:'📖 LEGENDA',
     floor_label:'Piętro', floor_of:'/ 6',
     info:'AWSD / strzałki — ruch &nbsp;|&nbsp; H — mikstura &nbsp;|&nbsp; Ctrl+R — restart',
@@ -77,6 +79,13 @@ const LANG = {
     msg_chest_trap: (d)=>`Pułapka w skrzyni! -${d} HP!`,
     msg_chest_item: s=>`Skrzynia! Znalazłeś: ${s}!`,
     msg_secret: 'Tajne pomieszczenie!',
+    world_select_title:'WYBIERZ ŚWIAT',
+    world1_name:'[ 1 ]  ŚWIAT I', world1_sub:'Lochy i zamki · 6 pięter',
+    world2_name:'[ 2 ]  ŚWIAT II', world2_sub:'Otchłań chaosu · 6 pięter · trudniejszy',
+    world2_locked:'🔒  ZABLOKOWANY', world2_locked_sub:'Pokonaj Mrocznego Boga w Świecie I',
+    world1_complete_title:'★ ŚWIAT I UKOŃCZONY! ★',
+    world1_complete_sub:'Mroczny Bóg pokonany! Świat II odblokowany!',
+    world1_complete_next:'[ENTER] Wybór świata  [R] Nowa gra',
     score_title:'🏆 TABLICA WYNIKÓW',
     score_empty:'Brak wyników',
     score_yours:'Twój wynik:',
@@ -90,7 +99,9 @@ const LANG = {
     ab_vision:'Jasnowidzenie',ab_vision_d:'+2 promień widzenia',
   },
   en: {
-    names: {Goblin:'Goblin',Szkielet:'Skeleton',Troll:'Troll',Smok:'Dragon',Demon:'Demon',Lich:'Lich',Wampir:'Vampire',Golem:'Golem','Mroczny Bóg':'Dark God'},
+    names: {Goblin:'Goblin',Szkielet:'Skeleton',Troll:'Troll',Smok:'Dragon',Demon:'Demon',Lich:'Lich',Wampir:'Vampire',Golem:'Golem','Mroczny Bóg':'Dark God',
+      'Upiór':'Wraith','Bazyliszek':'Basilisk','Rycerz':'Dark Knight',
+      'Cerber':'Cerberus','Hydra':'Hydra','Gorgona':'Gorgon','Feniks':'Phoenix','Lewiatan':'Leviathan','Śmierć':'Death'},
     h_enemies:'⚔ ENEMIES', h_bosses:'👑 BOSSES', h_controls:'🎮 CONTROLS', h_legend:'📖 LEGEND',
     floor_label:'Floor', floor_of:'/ 6',
     info:'AWSD / arrows — move &nbsp;|&nbsp; H — potion &nbsp;|&nbsp; Ctrl+R — restart',
@@ -165,6 +176,13 @@ const LANG = {
     msg_chest_trap: (d)=>`Trap chest! -${d} HP!`,
     msg_chest_item: s=>`Chest! Found: ${s}!`,
     msg_secret: 'Secret room!',
+    world_select_title:'CHOOSE WORLD',
+    world1_name:'[ 1 ]  WORLD I', world1_sub:'Dungeons & Castles · 6 floors',
+    world2_name:'[ 2 ]  WORLD II', world2_sub:'Abyss of Chaos · 6 floors · harder',
+    world2_locked:'🔒  LOCKED', world2_locked_sub:'Defeat the Dark God in World I',
+    world1_complete_title:'★ WORLD I COMPLETE! ★',
+    world1_complete_sub:'Dark God defeated! World II unlocked!',
+    world1_complete_next:'[ENTER] World select  [R] New game',
     score_title:'🏆 LEADERBOARD',
     score_empty:'No scores yet',
     score_yours:'Your score:',
@@ -198,13 +216,15 @@ function applyLang() {
 
 // ===================== STAŁE =====================
 const TILE  = 20;
-const COLS  = 14;
-const ROWS  = 20;
+const HUD   = 130;
 const FLOORS = 6;
 const FOG_RADIUS = 4;
-const W = COLS * TILE;   // 252px
-const H = ROWS * TILE;   // 360px
-const HUD = 130;
+
+// Wymiary zależne od świata (zmieniane przez applyWorldSettings)
+let COLS = 14;
+let ROWS = 20;
+let W    = COLS * TILE;
+let H    = ROWS * TILE;
 
 const canvas = document.getElementById('game');
 canvas.width  = W;
@@ -212,6 +232,7 @@ canvas.height = H + HUD;
 let ctx = canvas.getContext('2d');
 const gameCtx = ctx;
 
+// ===================== ŚWIAT 1 — wrogowie / bossowie =====================
 const ENEMIES = [
   {name:'Goblin',   hp:15,  atk:4,  xp:10, gold:5},
   {name:'Szkielet', hp:20,  atk:6,  xp:15, gold:8},
@@ -225,6 +246,43 @@ const BOSSES = [
   {name:'Golem',       hp:200, atk:35, xp:160, gold:160},
   {name:'Mroczny Bóg', hp:260, atk:45, xp:200, gold:200},
 ];
+
+// ===================== ŚWIAT 2 — wrogowie / bossowie =====================
+// Świat 2: mapa 18×26 (zamiast 14×20), więcej wrogów, silniejsi bossowie.
+const W2_ENEMIES = [
+  {name:'Upiór',      hp:35,  atk:9,  xp:25, gold:12},
+  {name:'Bazyliszek', hp:50,  atk:14, xp:35, gold:18},
+  {name:'Rycerz',     hp:70,  atk:18, xp:50, gold:25},
+];
+const W2_BOSSES = [
+  {name:'Cerber',    hp:130, atk:25, xp:90,  gold:70},
+  {name:'Hydra',     hp:180, atk:32, xp:120, gold:95},
+  {name:'Gorgona',   hp:240, atk:40, xp:150, gold:130},
+  {name:'Feniks',    hp:310, atk:48, xp:185, gold:165},
+  {name:'Lewiatan',  hp:390, atk:57, xp:225, gold:200},
+  {name:'Śmierć',    hp:500, atk:70, xp:280, gold:250},
+];
+
+// ===================== ZARZĄDZANIE ŚWIATAMI =====================
+let currentWorld = 1;
+
+function isWorld2Unlocked() {
+  try { return !!localStorage.getItem('dc_w2_unlocked'); } catch(e) { return false; }
+}
+function unlockWorld2() {
+  try { localStorage.setItem('dc_w2_unlocked', '1'); } catch(e) {}
+}
+
+// Ustawia wymiary mapy i canvas zgodnie ze światem
+function applyWorldSettings(world) {
+  currentWorld = world;
+  COLS = (world === 2) ? 18 : 14;
+  ROWS = (world === 2) ? 26 : 20;
+  W    = COLS * TILE;
+  H    = ROWS * TILE;
+  canvas.width  = W;
+  canvas.height = H + HUD;
+}
 
 // ===================== STAN GRY =====================
 let game = {};
@@ -259,10 +317,12 @@ function newPlayer() {
 }
 
 function initGame() {
+  applyWorldSettings(currentWorld);
   const d0 = DIFF_SETTINGS[difficulty] || DIFF_SETTINGS[2];
   game = {
     floor: 1,
     lives: d0.lives,
+    world: currentWorld,
     player: newPlayer(),
     grid: [], entities: [],
     messages: [],
@@ -338,18 +398,23 @@ function generateMap(floorNum) {
     }
   }
 
-  place(4 + floorNum, 'gold');
-  place(2, 'potion');
+  // Świat 2 ma więcej złota i mikstur na większej mapie
+  const isW2 = (currentWorld === 2);
+  place(isW2 ? 6 + floorNum : 4 + floorNum, 'gold');
+  place(isW2 ? 3 : 2, 'potion');
 
-  const enemyCount = 3 + floorNum * 2;
+  // Świat 2: 5 + floor*3 wrogów (vs 3 + floor*2 w W1)
+  const enemyCount = isW2 ? (5 + floorNum * 3) : (3 + floorNum * 2);
+  const enemyList  = isW2 ? W2_ENEMIES : ENEMIES;
+  const bossList   = isW2 ? W2_BOSSES  : BOSSES;
+
   for (let i = 0; i < enemyCount; i++) {
     for (let j = free.length-1; j >= 0; j--) {
       const [x,y] = free[j];
       if (!used.has(`${x},${y}`)) {
-        const tmpl = ENEMIES[Math.floor(Math.random()*ENEMIES.length)];
+        const tmpl = enemyList[Math.floor(Math.random()*enemyList.length)];
         const ds = DIFF_SETTINGS[difficulty] || DIFF_SETTINGS[2];
         // Skalowanie piętrem: +20% HP i ATK za każde piętro powyżej 1.
-        // Dzięki temu wrogowie pozostają wyzwaniem przez całą grę, nie tylko na floor 1.
         const floorScale = 1.0 + (floorNum - 1) * 0.20;
         const e2 = clone(tmpl);
         e2.hp = Math.round(e2.hp * ds.enemyHp * floorScale);
@@ -363,7 +428,7 @@ function generateMap(floorNum) {
     const [x,y] = free[j];
     if (!used.has(`${x},${y}`)) {
       const bds = DIFF_SETTINGS[difficulty] || DIFF_SETTINGS[2];
-      const b2 = clone(BOSSES[floorNum-1]);
+      const b2 = clone(bossList[floorNum-1]);
       b2.hp = Math.round(b2.hp * bds.enemyHp);
       b2.atk = Math.round(b2.atk * bds.enemyAtk);
       entities.push({type:'boss', x, y, spawnX:x, spawnY:y, ...b2});
@@ -485,6 +550,8 @@ function updateBossPanel() {
 }
 
 function showTitle() {
+  currentWorld = 1;
+  applyWorldSettings(1);
   game = { state: 'lang' };
 }
 
@@ -787,7 +854,16 @@ function move(dx, dy) {
       if (game.floor === FLOORS) {
         const anyLeft = game.entities.some(x => x.type==='enemy'||x.type==='boss');
         if (anyLeft) { msg(t('msg_enemies_block'), '#ff4444'); p.x=nx; p.y=ny; return; }
-        game.state = 'victory'; saveScore(); updateTouchUI(); return;
+        saveScore();
+        if (currentWorld === 1) {
+          // Świat 1 ukończony — odblokuj świat 2
+          unlockWorld2();
+          game.state = 'world_complete';
+        } else {
+          // Świat 2 ukończony — ostateczne zwycięstwo
+          game.state = 'victory';
+        }
+        updateTouchUI(); return;
       }
       game.state = 'shop'; updateTouchUI(); return;
     }

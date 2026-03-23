@@ -48,7 +48,7 @@
       pointer-events: none; z-index: 0;
     }
 
-    /* ===== NAGŁÓWEK ===== */
+    /* ===== HEADER ===== */
     #header {
       position: relative; z-index: 10;
       display: flex; align-items: center; justify-content: space-between;
@@ -61,20 +61,24 @@
       display: flex; align-items: center; gap: 14px;
     }
 
-    /* Logo berserker — order 1 (LEWA strona) */
+    /* Logo — lewa strona */
     #berserker-logo {
       order: 1;
       width: 52px; height: 52px; flex-shrink: 0;
       animation: logoPulse 3.5s ease-in-out infinite;
       cursor: default;
     }
-
-    @keyframes logoPulse {
-      0%, 100% { filter: drop-shadow(0 0 6px rgba(40,120,255,0.6)); }
-      50%       { filter: drop-shadow(0 0 18px rgba(80,160,255,0.9)); }
+    #berserker-logo svg {
+      width: 52px; height: 52px;
+      filter: drop-shadow(0 0 6px rgba(139,0,0,0.7));
     }
 
-    /* Tekst tytułu — order 2 (prawa strona) */
+    @keyframes logoPulse {
+      0%, 100% { filter: drop-shadow(0 0 6px rgba(139,0,0,0.6)); }
+      50%       { filter: drop-shadow(0 0 18px rgba(200,20,20,0.95)); }
+    }
+
+    /* Tytuł — prawa strona */
     #title-text {
       display: flex; flex-direction: column;
       order: 2;
@@ -165,11 +169,34 @@
       50%       { box-shadow: 0 0 0 2px rgba(192,132,252,0.5), 0 0 45px rgba(192,132,252,0.55), 0 0 90px rgba(130,80,220,0.35), 0 20px 40px rgba(0,0,0,0.6); }
     }
     .game-card:not(.active):hover { filter: brightness(0.85) saturate(0.85); transform: scale(1.02); }
+
+    /* TŁO KAFELKA — SVG wypełniające całą przestrzeń */
+    .cover-art {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .cover-art svg {
+      width: 100%; height: 100%;
+      object-fit: cover;
+    }
+
+    /* Alive — 1s błysk przy wyborze kafelka */
+    @keyframes cardAlive {
+      0%   { box-shadow: 0 0 0 2px rgba(192,132,252,0.5), 0 0 60px rgba(255,80,80,0.8), 0 0 120px rgba(200,30,30,0.5), inset 0 0 40px rgba(255,100,0,0.3); filter: brightness(1.5) saturate(1.4); }
+      40%  { box-shadow: 0 0 0 2px rgba(192,132,252,0.5), 0 0 40px rgba(192,132,252,0.6), 0 0 80px rgba(130,80,220,0.3), 0 20px 40px rgba(0,0,0,0.6); filter: brightness(1.1) saturate(1.1); }
+      100% { box-shadow: 0 0 0 2px rgba(192,132,252,0.3), 0 0 30px rgba(192,132,252,0.4), 0 0 60px rgba(130,80,220,0.2), 0 20px 40px rgba(0,0,0,0.6); filter: brightness(1) saturate(1); }
+    }
+    .game-card.alive {
+      animation: cardAlive 1s ease-out forwards !important;
+    }
+
     .cover-canvas { width: 100%; height: 100%; display: block; }
 
     .card-overlay {
       position: absolute; bottom: 0; left: 0; right: 0; padding: 16px;
-      background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+      background: linear-gradient(0deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
     }
     .card-title  { font-size: 18px; font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
     .card-author { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 0.5px; margin-bottom: 8px; }
@@ -190,12 +217,11 @@
     .game-card.placeholder { opacity: 0.4; cursor: not-allowed; }
     .game-card.placeholder:hover { filter: brightness(0.65) saturate(0.7); transform: none; }
 
-    /* ===== DOTY — pod kafelkami (normalny flow) ===== */
+    /* ===== DOTY ===== */
     #nav-dots {
       display: flex;
       justify-content: center;
-      gap: 8px;
-      z-index: 10;
+      gap: 8px; z-index: 10;
       padding: 10px 0 6px;
       flex-shrink: 0;
     }
@@ -205,7 +231,7 @@
     }
     .nav-dot.active { background: #c084fc; width: 20px; border-radius: 3px; box-shadow: 0 0 8px rgba(192,132,252,0.6); }
 
-    /* ===== DOLNY PANEL — STAŁA WYSOKOŚĆ ===== */
+    /* ===== DOLNY PANEL ===== */
     #info-panel {
       position: relative; z-index: 10;
       padding: 0 48px 20px;
@@ -227,9 +253,7 @@
     }
     #desc-text {
       font-size: 13px; line-height: 1.5; color: rgba(255,255,255,0.55);
-      max-width: 580px;
-      height: 40px;
-      overflow: hidden; margin-bottom: 10px;
+      max-width: 580px; height: 40px; overflow: hidden; margin-bottom: 10px;
     }
     #desc-meta {
       display: flex; align-items: center; gap: 20px;
@@ -287,35 +311,28 @@
     /* ===== MOBILE PORTRAIT (≤600px) ===== */
     @media (max-width: 600px) {
       body { overflow: hidden; }
-
       #header { padding: 12px 16px 10px; }
       #title-main { font-size: 14px; letter-spacing: 1px; }
       #title-sub  { font-size: 9px;  letter-spacing: 1px; }
       #berserker-logo { width: 36px; height: 36px; }
+      #berserker-logo svg { width: 36px; height: 36px; }
       #controls-hint  { display: none; }
       #logo-area { gap: 10px; }
-
       #section-label  { padding: 0 16px; margin-bottom: 10px; font-size: 10px; }
-
       #gallery-wrapper { padding: 10px 0 6px; touch-action: pan-y; }
-      #gallery-wrapper::before,
-      #gallery-wrapper::after { width: 20px; }
+      #gallery-wrapper::before, #gallery-wrapper::after { width: 20px; }
       #gallery { gap: 14px; padding: 0 16px; }
-
       .game-card  { width: 240px; height: 166px; }
       .card-title { font-size: 14px; }
       .card-author{ font-size: 10px; }
-
       #info-panel   { padding: 0 16px 14px; height: 110px; }
       #desc-title   { font-size: 15px; letter-spacing: 1px; }
       #desc-text    { font-size: 11px; height: 33px; margin-bottom: 8px; }
       #desc-meta    { height: 28px; gap: 10px; }
       #play-btn     { font-size: 11px; padding: 6px 14px; letter-spacing: 1px; }
-
       #nav-dots { padding: 6px 0 4px; }
       .nav-dot  { width: 5px; height: 5px; }
       .nav-dot.active { width: 14px; }
-
       .nav-arrow { width: 36px; height: 36px; font-size: 16px; }
       #arrow-left  { left: 4px; }
       #arrow-right { right: 4px; }
@@ -327,21 +344,18 @@
       #title-main { font-size: 14px; letter-spacing: 1px; }
       #title-sub  { font-size: 9px; }
       #berserker-logo { width: 34px; height: 34px; }
+      #berserker-logo svg { width: 34px; height: 34px; }
       #controls-hint  { display: none; }
-
       #section-label { margin-bottom: 8px; padding: 0 24px; font-size: 10px; }
-
       #gallery-wrapper { padding: 8px 0 6px; touch-action: pan-y; }
       #gallery { gap: 16px; padding: 0 24px; }
       .game-card { width: 210px; height: 144px; }
       .card-title { font-size: 14px; }
-
       #info-panel { height: 96px; padding: 0 24px 10px; }
       #desc-title { font-size: 15px; }
       #desc-text  { height: 28px; font-size: 11px; margin-bottom: 6px; }
       #desc-meta  { height: 26px; }
       #play-btn   { font-size: 11px; padding: 4px 14px; }
-
       #nav-dots { padding: 4px 0 2px; }
       .nav-arrow { width: 36px; height: 36px; }
     }
@@ -351,11 +365,9 @@
       #header { padding: 16px 32px 12px; }
       #title-main { font-size: 18px; letter-spacing: 2px; }
       #controls-hint { display: none; }
-
       #section-label { padding: 0 32px; }
       #gallery { padding: 0 32px; gap: 20px; }
       .game-card { width: 280px; height: 194px; }
-
       #info-panel { padding: 0 32px 18px; height: 120px; }
       #nav-dots { padding: 8px 0 4px; }
     }
@@ -365,52 +377,29 @@
 
 <header id="header">
   <div id="logo-area">
-    <!-- Logo berserker PO LEWEJ (order:1) -->
+    <!-- Logo — ikona Dungeon Crawler (lewa strona) -->
     <div id="berserker-logo">
-      <svg viewBox="0 0 52 52" width="52" height="52" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="lbg" cx="50%" cy="40%" r="65%">
-            <stop offset="0%" stop-color="#0a1a3a"/>
-            <stop offset="100%" stop-color="#03080f"/>
-          </radialGradient>
-          <linearGradient id="axeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#d0e0f4"/>
-            <stop offset="40%" stop-color="#8ab0d8"/>
-            <stop offset="100%" stop-color="#4a6888"/>
-          </linearGradient>
-          <filter id="bglow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="1.6" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <!-- Tło -->
-        <circle cx="26" cy="26" r="25" fill="url(#lbg)" stroke="rgba(40,120,255,0.65)" stroke-width="1.3"/>
-        <!-- Trzonek (pionowy) -->
-        <rect x="24.5" y="11" width="3" height="31" rx="1.5" fill="#7a4a20" stroke="#3a2008" stroke-width="0.7"/>
-        <!-- Lewa głownia -->
-        <path d="M24.5 14 Q5 9 5 22 Q5 35 24.5 30 Z" fill="url(#axeGrad)" stroke="#4a70a0" stroke-width="0.7"/>
-        <!-- Prawa głownia -->
-        <path d="M27.5 14 Q47 9 47 22 Q47 35 27.5 30 Z" fill="url(#axeGrad)" stroke="#4a70a0" stroke-width="0.7"/>
-        <!-- Refleksy na ostrzach -->
-        <path d="M24.5 14 Q5 9 5 22" stroke="rgba(220,240,255,0.55)" stroke-width="0.9" fill="none"/>
-        <path d="M27.5 14 Q47 9 47 22" stroke="rgba(220,240,255,0.55)" stroke-width="0.9" fill="none"/>
-        <!-- ᛏ Runa Tiwaz (T) — lewa głownia -->
-        <g filter="url(#bglow)">
-          <line x1="13" y1="15" x2="13" y2="29" stroke="#44aaff" stroke-width="1.6" stroke-linecap="round"/>
-          <line x1="13" y1="19" x2="8.5" y2="24" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="13" y1="19" x2="17.5" y2="24" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
-        </g>
-        <!-- ᛒ Runa Berkano (B) — prawa głownia -->
-        <g filter="url(#bglow)">
-          <line x1="37" y1="15" x2="37" y2="29" stroke="#44aaff" stroke-width="1.6" stroke-linecap="round"/>
-          <line x1="37" y1="15" x2="41.5" y2="18" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="41.5" y1="18" x2="37" y2="22" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="37" y1="22" x2="41.5" y2="25.5" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="41.5" y1="25.5" x2="37" y2="29" stroke="#44aaff" stroke-width="1.3" stroke-linecap="round"/>
-        </g>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="52" height="52">
+        <rect width="100" height="100" rx="15" fill="#1a0a2e"/>
+        <rect x="3" y="3" width="94" height="94" rx="13" fill="none" stroke="#8B0000" stroke-width="2.5"/>
+        <line x1="50" y1="15" x2="50" y2="65" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
+        <line x1="36" y1="38" x2="64" y2="38" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
+        <rect x="46" y="62" width="8" height="14" rx="3" fill="#8B4513"/>
+        <line x1="50" y1="15" x2="53" y2="25" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+        <ellipse cx="50" cy="82" rx="10" ry="8" fill="#e0d0a0"/>
+        <rect x="43" y="86" width="14" height="5" rx="1" fill="#e0d0a0"/>
+        <rect x="44" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
+        <rect x="49" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
+        <rect x="54" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
+        <ellipse cx="46" cy="81" rx="2.5" ry="2.5" fill="#1a0a2e"/>
+        <ellipse cx="54" cy="81" rx="2.5" ry="2.5" fill="#1a0a2e"/>
+        <circle cx="20" cy="20" r="2" fill="#FFD700" opacity="0.8"/>
+        <circle cx="80" cy="20" r="2" fill="#FFD700" opacity="0.8"/>
+        <circle cx="15" cy="55" r="1.5" fill="#FF4500" opacity="0.6"/>
+        <circle cx="85" cy="55" r="1.5" fill="#FF4500" opacity="0.6"/>
       </svg>
     </div>
-    <!-- Tekst tytułu po PRAWEJ stronie logo (order:2) -->
+    <!-- Tytuł — prawa strona -->
     <div id="title-text">
       <span id="title-main">Tinyberserker Games</span>
       <span id="title-sub">kolekcja gier &nbsp;&middot;&nbsp; tinyberserker</span>
@@ -440,8 +429,29 @@
     <div class="nav-arrow"        id="arrow-right" onclick="navigate(1)">&#8250;</div>
 
     <div id="gallery">
+      <!-- KAFELEK 0: Dungeon Crawler — tło = ikona SVG -->
       <div class="game-card active" id="card-0" onclick="enterGame(0)">
-        <canvas class="cover-canvas" id="cover-0" width="320" height="220"></canvas>
+        <div class="cover-art">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+            <rect width="100" height="100" rx="0" fill="#1a0a2e"/>
+            <rect x="3" y="3" width="94" height="94" rx="0" fill="none" stroke="#8B0000" stroke-width="2.5"/>
+            <line x1="50" y1="15" x2="50" y2="65" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
+            <line x1="36" y1="38" x2="64" y2="38" stroke="#c0c0c0" stroke-width="4" stroke-linecap="round"/>
+            <rect x="46" y="62" width="8" height="14" rx="3" fill="#8B4513"/>
+            <line x1="50" y1="15" x2="53" y2="25" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.7"/>
+            <ellipse cx="50" cy="82" rx="10" ry="8" fill="#e0d0a0"/>
+            <rect x="43" y="86" width="14" height="5" rx="1" fill="#e0d0a0"/>
+            <rect x="44" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
+            <rect x="49" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
+            <rect x="54" y="87" width="3" height="4" rx="1" fill="#1a0a2e"/>
+            <ellipse cx="46" cy="81" rx="2.5" ry="2.5" fill="#1a0a2e"/>
+            <ellipse cx="54" cy="81" rx="2.5" ry="2.5" fill="#1a0a2e"/>
+            <circle cx="20" cy="20" r="2" fill="#FFD700" opacity="0.8"/>
+            <circle cx="80" cy="20" r="2" fill="#FFD700" opacity="0.8"/>
+            <circle cx="15" cy="55" r="1.5" fill="#FF4500" opacity="0.6"/>
+            <circle cx="85" cy="55" r="1.5" fill="#FF4500" opacity="0.6"/>
+          </svg>
+        </div>
         <div class="card-badge badge-new">Graj</div>
         <div class="card-overlay">
           <div class="card-title">Dungeon Crawler</div>
@@ -454,6 +464,7 @@
         </div>
       </div>
 
+      <!-- KAFELEK 1 -->
       <div class="game-card placeholder" id="card-1" onclick="enterGame(1)">
         <canvas class="cover-canvas" id="cover-1" width="320" height="220"></canvas>
         <div class="card-badge badge-soon">Wkrótce</div>
@@ -464,6 +475,7 @@
         </div>
       </div>
 
+      <!-- KAFELEK 2 -->
       <div class="game-card placeholder" id="card-2" onclick="enterGame(2)">
         <canvas class="cover-canvas" id="cover-2" width="320" height="220"></canvas>
         <div class="card-badge badge-soon">Wkrótce</div>
@@ -476,7 +488,6 @@
     </div>
   </div>
 
-  <!-- Doty NAWIGACYJne — w normalnym flow, pod gallery -->
   <div id="nav-dots">
     <div class="nav-dot active" onclick="selectCard(0)"></div>
     <div class="nav-dot" onclick="selectCard(1)"></div>
@@ -496,50 +507,49 @@
 </div>
 
 <script>
-// ===================== DANE GIER =====================
 var GAMES = [
   {
     id: 0, title: 'Dungeon Crawler', author: 'Jasiu', year: '2025',
     description: 'Mroczna roguelike RPG \u2014 eksploruj lochy, bij potwory, zdobywaj z\u0142oto. 6 pi\u0119ter, 6 boss\u00f3w, sklep i zdolno\u015bci pasywne!',
-    url: 'dungeon-crawler/index.html', available: true, coverStyle: 'dungeon',
+    url: 'dungeon-crawler/index.html', available: true,
   },
   {
     id: 1, title: '??? Nieznana Gra', author: 'Jasiu', year: '???',
     description: 'Tajemniczy projekt w fazie planowania\u2026 wr\u00f3\u0107 tutaj wkr\u00f3tce.',
-    url: null, available: false, coverStyle: 'mystery',
+    url: null, available: false,
   },
   {
     id: 2, title: '??? Projekt X', author: 'Jasiu', year: '???',
     description: 'Co\u015b nowego jest w drodze. B\u0105d\u017a na bie\u017c\u0105co!',
-    url: null, available: false, coverStyle: 'mystery2',
+    url: null, available: false,
   },
 ];
 
 var currentIndex = 0;
 
-// ===================== ALIVE ANIMATION (dungeon cover) =====================
-var dungeonAliveTimer = 0;  // countdown frames (60fps ≈ 65 frames = ~1s)
-function triggerDungeonAlive() { dungeonAliveTimer = 65; }
-
-// ===================== WEB AUDIO =====================
-var audioCtx = null;
-function ensureAudio() {
-  if (!audioCtx) {
-    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
-  }
+// ===== ALIVE FLASH =====
+function triggerAlive(index) {
+  var card = document.getElementById('card-' + index);
+  if (!card) return;
+  card.classList.remove('alive');
+  void card.offsetWidth; // reflow
+  card.classList.add('alive');
+  setTimeout(function() { card.classList.remove('alive'); }, 1050);
 }
 
+// ===== AUDIO =====
+var audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+}
 function playNavSound() {
-  ensureAudio();
-  if (!audioCtx) return;
+  ensureAudio(); if (!audioCtx) return;
   try {
     var t = audioCtx.currentTime;
     [523, 659].forEach(function(freq, i) {
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
       osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
+      osc.type = 'triangle'; osc.frequency.value = freq;
       var s = t + i * 0.055;
       gain.gain.setValueAtTime(0, s);
       gain.gain.linearRampToValueAtTime(0.11, s + 0.012);
@@ -548,18 +558,14 @@ function playNavSound() {
     });
   } catch(e) {}
 }
-
 function playSelectSound() {
-  ensureAudio();
-  if (!audioCtx) return;
+  ensureAudio(); if (!audioCtx) return;
   try {
     var t = audioCtx.currentTime;
     [523, 659, 784, 1047].forEach(function(freq, i) {
-      var osc = audioCtx.createOscillator();
-      var gain = audioCtx.createGain();
+      var osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
       osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
+      osc.type = 'triangle'; osc.frequency.value = freq;
       var s = t + i * 0.07;
       gain.gain.setValueAtTime(0, s);
       gain.gain.linearRampToValueAtTime(0.10, s + 0.012);
@@ -569,22 +575,20 @@ function playSelectSound() {
   } catch(e) {}
 }
 
-// ===================== NAWIGACJA =====================
+// ===== NAWIGACJA =====
 function navigate(dir) {
-  var newIndex = currentIndex + dir;
-  if (newIndex < 0 || newIndex >= GAMES.length) return;
-  playNavSound();
-  selectCard(newIndex);
+  var ni = currentIndex + dir;
+  if (ni < 0 || ni >= GAMES.length) return;
+  playNavSound(); selectCard(ni);
 }
 
 function selectCard(index) {
   if (index < 0 || index >= GAMES.length) return;
-  var prev = document.getElementById('card-' + currentIndex);
-  if (prev) prev.classList.remove('active');
+  document.getElementById('card-' + currentIndex).classList.remove('active');
   currentIndex = index;
   var card = document.getElementById('card-' + index);
-  if (card) card.classList.add('active');
-  if (index === 0) triggerDungeonAlive();
+  card.classList.add('active');
+  triggerAlive(index);
   updateGalleryTransform();
   updateInfoPanel();
   updateDots();
@@ -595,45 +599,32 @@ function updateGalleryTransform() {
   var gallery = document.getElementById('gallery');
   var card = document.querySelector('.game-card');
   if (!card) return;
-  var cardRect = card.getBoundingClientRect();
-  var cardW = cardRect.width;
+  var cardW = card.getBoundingClientRect().width;
   var gStyle = window.getComputedStyle(gallery);
   var gap = parseFloat(gStyle.gap || gStyle.columnGap || '24') || 24;
   var padL = parseFloat(gStyle.paddingLeft) || 48;
   var center = padL + currentIndex * (cardW + gap) + cardW / 2;
-  var offset = window.innerWidth / 2 - center;
-  gallery.style.transform = 'translateX(' + offset + 'px)';
+  gallery.style.transform = 'translateX(' + (window.innerWidth / 2 - center) + 'px)';
 }
 
 function updateInfoPanel() {
   var game = GAMES[currentIndex];
   var desc = document.getElementById('game-description');
-  var titleEl = document.getElementById('desc-title');
-  var textEl  = document.getElementById('desc-text');
-  var authorEl= document.getElementById('desc-author');
-  var playBtn = document.getElementById('play-btn');
-
   desc.classList.remove('visible');
   setTimeout(function() {
-    titleEl.textContent  = game.title;
-    textEl.textContent   = game.description;
-    authorEl.textContent = 'By ' + game.author + ' \u00b7 ' + game.year;
-    if (game.available && game.url) {
-      playBtn.href = game.url;
-      playBtn.classList.remove('hidden');
-    } else {
-      playBtn.classList.add('hidden');
-    }
+    document.getElementById('desc-title').textContent  = game.title;
+    document.getElementById('desc-text').textContent   = game.description;
+    document.getElementById('desc-author').textContent = 'By ' + game.author + ' \u00b7 ' + game.year;
+    var btn = document.getElementById('play-btn');
+    if (game.available && game.url) { btn.href = game.url; btn.classList.remove('hidden'); }
+    else { btn.classList.add('hidden'); }
     desc.classList.add('visible');
   }, 160);
 }
 
 function updateDots() {
-  document.querySelectorAll('.nav-dot').forEach(function(dot, i) {
-    dot.classList.toggle('active', i === currentIndex);
-  });
+  document.querySelectorAll('.nav-dot').forEach(function(d, i) { d.classList.toggle('active', i === currentIndex); });
 }
-
 function updateArrows() {
   document.getElementById('arrow-left').classList.toggle('hidden', currentIndex === 0);
   document.getElementById('arrow-right').classList.toggle('hidden', currentIndex === GAMES.length - 1);
@@ -642,10 +633,10 @@ function updateArrows() {
 function enterGame(index) {
   var game = GAMES[index];
   if (!game.available) { showFlash('Ta gra jest jeszcze w przygotowaniu...'); return; }
-  if (index === 0) triggerDungeonAlive();
+  triggerAlive(index);
   playSelectSound();
   showFlash('\u0141adowanie ' + game.title + '...');
-  setTimeout(function() { window.location.href = game.url; }, 420);
+  setTimeout(function() { window.location.href = game.url; }, 450);
 }
 
 function showFlash(msg) {
@@ -655,7 +646,7 @@ function showFlash(msg) {
   el._t = setTimeout(function() { el.classList.remove('show'); }, 2200);
 }
 
-// ===================== KLAWIATURA =====================
+// ===== KLAWIATURA =====
 document.addEventListener('keydown', function(e) {
   switch(e.key) {
     case 'ArrowLeft':  case 'a': case 'A': e.preventDefault(); navigate(-1); break;
@@ -664,380 +655,56 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// ===================== TOUCH SWIPE =====================
+// ===== TOUCH =====
 var txStart = null, tyStart = null;
 var gw = document.getElementById('gallery-wrapper');
-
-gw.addEventListener('touchstart', function(e) {
-  txStart = e.touches[0].clientX;
-  tyStart = e.touches[0].clientY;
-}, { passive: true });
-
+gw.addEventListener('touchstart', function(e) { txStart = e.touches[0].clientX; tyStart = e.touches[0].clientY; }, { passive: true });
 gw.addEventListener('touchmove', function(e) {
   if (txStart === null) return;
-  var dx = Math.abs(e.touches[0].clientX - txStart);
-  var dy = Math.abs(e.touches[0].clientY - tyStart);
-  if (dx > dy && dx > 8) e.preventDefault();
+  if (Math.abs(e.touches[0].clientX - txStart) > Math.abs(e.touches[0].clientY - tyStart) + 8) e.preventDefault();
 }, { passive: false });
-
 gw.addEventListener('touchend', function(e) {
   if (txStart === null) return;
   var dx = e.changedTouches[0].clientX - txStart;
   var dy = e.changedTouches[0].clientY - tyStart;
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 38) {
-    navigate(dx < 0 ? 1 : -1);
-  }
+  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 38) navigate(dx < 0 ? 1 : -1);
   txStart = null;
 }, { passive: true });
 
-// ===================== COVER ART — DUNGEON CRAWLER (AD&D scene) =====================
-function drawDungeonCover(canvas, alive) {
-  var ctx = canvas.getContext('2d');
-  var W = canvas.width, H = canvas.height, t = Date.now() / 1000;
-  alive = alive || 0;
-
-  // --- Background: stone dungeon wall ---
-  ctx.fillStyle = '#090508'; ctx.fillRect(0, 0, W, H);
-
-  // Stone blocks
-  var bW = 38, bH = 19;
-  for (var row = 0; row < Math.ceil(H / bH) + 1; row++) {
-    for (var col = 0; col < Math.ceil(W / bW) + 1; col++) {
-      var offX = (row % 2 === 0) ? 0 : bW / 2;
-      var bx = col * bW - offX, by = row * bH;
-      var v = ((col * 19 + row * 37) % 14);
-      var base = 18 + v + (alive > 0 ? alive * 8 : 0);
-      ctx.fillStyle = 'rgb(' + Math.round(base) + ',' + Math.round(base - 2) + ',' + Math.round(base + 3) + ')';
-      ctx.fillRect(bx + 1, by + 1, bW - 2, bH - 2);
-    }
-  }
-
-  // --- Torch (upper right) ---
-  var torchX = W * 0.84, torchY = H * 0.2;
-  var flicker = 0.85 + 0.15 * Math.sin(t * 8.1 + 1.3) + alive * 0.3;
-  // Torch glow lamp
-  var lamp = ctx.createRadialGradient(torchX, torchY, 0, torchX, torchY, 70 * flicker);
-  lamp.addColorStop(0, 'rgba(255,190,70,' + (0.55 * flicker) + ')');
-  lamp.addColorStop(0.45, 'rgba(180,90,15,' + (0.22 * flicker) + ')');
-  lamp.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = lamp; ctx.fillRect(0, 0, W, H);
-  // Torch stick
-  ctx.strokeStyle = '#6a3a12'; ctx.lineWidth = 3; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(torchX, torchY + 22); ctx.lineTo(torchX, torchY + 8); ctx.stroke();
-  // Flame shape
-  ctx.save();
-  ctx.beginPath();
-  ctx.moveTo(torchX, torchY + 8);
-  ctx.quadraticCurveTo(torchX + 5 * flicker, torchY - 2, torchX, torchY - 12 - alive * 8);
-  ctx.quadraticCurveTo(torchX - 5 * flicker, torchY - 2, torchX, torchY + 8);
-  var flame = ctx.createLinearGradient(torchX, torchY - 12, torchX, torchY + 8);
-  flame.addColorStop(0, 'rgba(255,230,120,' + Math.min(1, 0.95 + alive * 0.3) + ')');
-  flame.addColorStop(0.6, 'rgba(255,120,20,0.85)');
-  flame.addColorStop(1, 'rgba(200,50,0,0.7)');
-  ctx.fillStyle = flame; ctx.fill();
-  ctx.restore();
-
-  // Ambient flash during alive
-  if (alive > 0) {
-    ctx.fillStyle = 'rgba(255,210,100,' + (alive * 0.28) + ')';
-    ctx.fillRect(0, 0, W, H);
-  }
-
-  // --- Floor shadow ---
-  var floor = ctx.createLinearGradient(0, H * 0.58, 0, H);
-  floor.addColorStop(0, 'rgba(0,0,0,0)');
-  floor.addColorStop(1, 'rgba(0,0,0,0.72)');
-  ctx.fillStyle = floor; ctx.fillRect(0, H * 0.58, W, H * 0.42);
-
-  // ===== SKELETON (right side) =====
-  var sx = W * 0.67, sy = H * 0.52;
-  var skelBob = Math.sin(t * 1.7) * 2.5;
-  var boneCol = alive > 0 ? 'rgba(245,235,200,0.95)' : 'rgba(195,188,168,0.85)';
-
-  // Skull
-  ctx.beginPath();
-  ctx.ellipse(sx, sy - 47 + skelBob, 9.5, 10, 0, 0, Math.PI * 2);
-  ctx.fillStyle = alive > 0 ? 'rgba(235,225,195,0.92)' : 'rgba(205,195,172,0.82)';
-  ctx.fill();
-  ctx.strokeStyle = boneCol; ctx.lineWidth = 1.2;
-  ctx.stroke();
-  // Jaw
-  ctx.beginPath();
-  ctx.moveTo(sx - 6, sy - 40 + skelBob);
-  ctx.quadraticCurveTo(sx, sy - 36 + skelBob, sx + 6, sy - 40 + skelBob);
-  ctx.strokeStyle = boneCol; ctx.lineWidth = 1.5; ctx.stroke();
-  // Teeth marks
-  for (var ti = -2; ti <= 2; ti++) {
-    ctx.beginPath();
-    ctx.moveTo(sx + ti * 2.2, sy - 40 + skelBob);
-    ctx.lineTo(sx + ti * 2.2, sy - 37.5 + skelBob);
-    ctx.strokeStyle = '#0a0508'; ctx.lineWidth = 1; ctx.stroke();
-  }
-  // Eye sockets
-  ctx.fillStyle = alive > 0 ? 'rgba(255,20,0,0.8)' : '#0f0508';
-  ctx.beginPath(); ctx.ellipse(sx - 3.5, sy - 49 + skelBob, 3, 2.5, -0.2, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(sx + 3.5, sy - 49 + skelBob, 3, 2.5, 0.2, 0, Math.PI * 2); ctx.fill();
-  // Spine / ribcage
-  ctx.strokeStyle = boneCol; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(sx, sy - 37 + skelBob); ctx.lineTo(sx, sy - 16 + skelBob); ctx.stroke();
-  for (var ri = 0; ri < 3; ri++) {
-    var ry = sy - 34 + ri * 6.5 + skelBob;
-    ctx.beginPath(); ctx.moveTo(sx, ry);
-    ctx.quadraticCurveTo(sx - 11, ry + 2, sx - 9.5, ry + 7); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(sx, ry);
-    ctx.quadraticCurveTo(sx + 11, ry + 2, sx + 9.5, ry + 7); ctx.stroke();
-  }
-  // Pelvis
-  ctx.beginPath();
-  ctx.moveTo(sx - 10, sy - 16 + skelBob);
-  ctx.quadraticCurveTo(sx, sy - 12 + skelBob, sx + 10, sy - 16 + skelBob);
-  ctx.strokeStyle = boneCol; ctx.lineWidth = 2; ctx.stroke();
-  // Left arm
-  ctx.beginPath();
-  ctx.moveTo(sx - 8, sy - 32 + skelBob);
-  ctx.lineTo(sx - 14, sy - 19 + skelBob);
-  ctx.lineTo(sx - 10, sy - 8 + skelBob);
-  ctx.strokeStyle = boneCol; ctx.lineWidth = 2.2; ctx.stroke();
-  // Right arm (raised weapon)
-  var skelSwing = alive > 0 ? -(0.4 + alive * 0.9) : 0.25 * Math.sin(t * 1.3);
-  ctx.save();
-  ctx.translate(sx + 8, sy - 31 + skelBob);
-  ctx.rotate(skelSwing);
-  ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(10, 18); ctx.strokeStyle = boneCol; ctx.lineWidth = 2.2; ctx.stroke();
-  // Bone club / scimitar
-  ctx.strokeStyle = alive > 0 ? 'rgba(210,200,175,0.95)' : 'rgba(195,185,160,0.85)';
-  ctx.lineWidth = 3; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(8, 15); ctx.lineTo(18, 33); ctx.stroke();
-  ctx.lineWidth = 1.5;
-  ctx.beginPath(); ctx.arc(14, 24, 5, -0.5, 1.8); ctx.stroke();
-  ctx.restore();
-  // Legs
-  ctx.strokeStyle = boneCol; ctx.lineWidth = 2.2;
-  ctx.beginPath(); ctx.moveTo(sx - 3, sy - 16 + skelBob); ctx.lineTo(sx - 8, sy + 6 + skelBob); ctx.lineTo(sx - 5, sy + 24 + skelBob); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(sx + 3, sy - 16 + skelBob); ctx.lineTo(sx + 8, sy + 6 + skelBob); ctx.lineTo(sx + 5, sy + 24 + skelBob); ctx.stroke();
-  // Foot bones
-  ctx.lineWidth = 1.8;
-  ctx.beginPath(); ctx.moveTo(sx - 5, sy + 24 + skelBob); ctx.lineTo(sx - 11, sy + 26 + skelBob); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(sx + 5, sy + 24 + skelBob); ctx.lineTo(sx + 11, sy + 26 + skelBob); ctx.stroke();
-
-  // ===== BARBARIAN (left side) =====
-  var bpx = W * 0.31, bpy = H * 0.5;
-  var barbBob = -Math.sin(t * 1.7) * 2.5; // opposite phase
-  var skinCol = alive > 0 ? '#d08860' : '#b07848';
-  var armorCol = alive > 0 ? '#942020' : '#721818';
-
-  // Boots / legs
-  ctx.fillStyle = '#2a1406';
-  ctx.beginPath(); ctx.roundRect(bpx - 11, bpy + 4 + barbBob, 9, 22, 2); ctx.fill();
-  ctx.beginPath(); ctx.roundRect(bpx + 2, bpy + 4 + barbBob, 9, 22, 2); ctx.fill();
-  // Boot highlights
-  ctx.fillStyle = '#3a1e0a';
-  ctx.fillRect(bpx - 10, bpy + 5 + barbBob, 3, 18);
-  ctx.fillRect(bpx + 3, bpy + 5 + barbBob, 3, 18);
-
-  // Torso (leather/cloth)
-  ctx.fillStyle = armorCol;
-  ctx.beginPath();
-  ctx.moveTo(bpx - 14, bpy + 4 + barbBob);
-  ctx.lineTo(bpx + 14, bpy + 4 + barbBob);
-  ctx.lineTo(bpx + 12, bpy - 25 + barbBob);
-  ctx.lineTo(bpx - 12, bpy - 25 + barbBob);
-  ctx.closePath(); ctx.fill();
-  // Torso detail lines
-  ctx.strokeStyle = 'rgba(160,40,40,0.6)'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(bpx, bpy - 24 + barbBob); ctx.lineTo(bpx, bpy + 3 + barbBob); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(bpx - 8, bpy - 12 + barbBob); ctx.lineTo(bpx + 8, bpy - 12 + barbBob); ctx.stroke();
-
-  // Pauldrons (shoulder guards)
-  ctx.fillStyle = '#708090';
-  ctx.beginPath(); ctx.ellipse(bpx - 14, bpy - 22 + barbBob, 8, 7, -0.3, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(bpx + 14, bpy - 22 + barbBob, 8, 7, 0.3, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#505a68'; ctx.lineWidth = 1.2;
-  ctx.beginPath(); ctx.ellipse(bpx - 14, bpy - 22 + barbBob, 8, 7, -0.3, 0, Math.PI * 2); ctx.stroke();
-  ctx.beginPath(); ctx.ellipse(bpx + 14, bpy - 22 + barbBob, 8, 7, 0.3, 0, Math.PI * 2); ctx.stroke();
-  // Rivets on pauldrons
-  ctx.fillStyle = '#909aa8';
-  ctx.beginPath(); ctx.arc(bpx - 17, bpy - 24 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(bpx - 11, bpy - 21 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(bpx + 17, bpy - 24 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.arc(bpx + 11, bpy - 21 + barbBob, 1.5, 0, Math.PI * 2); ctx.fill();
-
-  // Left arm + shield
-  ctx.fillStyle = skinCol;
-  ctx.save();
-  ctx.translate(bpx - 13, bpy - 25 + barbBob);
-  ctx.rotate(0.25);
-  ctx.beginPath(); ctx.roundRect(-4, 0, 8, 16, 3); ctx.fillStyle = skinCol; ctx.fill();
-  // Shield
-  ctx.save(); ctx.translate(-12, 10);
-  ctx.fillStyle = alive > 0 ? '#5a2e08' : '#3e2008';
-  ctx.beginPath();
-  ctx.moveTo(0, -13); ctx.lineTo(11, -5); ctx.lineTo(11, 7); ctx.lineTo(0, 14); ctx.lineTo(-11, 7); ctx.lineTo(-11, -5);
-  ctx.closePath(); ctx.fill();
-  ctx.strokeStyle = '#8a6020'; ctx.lineWidth = 2; ctx.stroke();
-  // Shield boss (center knob)
-  ctx.fillStyle = '#c0a028';
-  ctx.beginPath(); ctx.arc(0, 0, 3.5, 0, Math.PI * 2); ctx.fill();
-  // Shield cross lines
-  ctx.strokeStyle = 'rgba(180,140,40,0.5)'; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(0, 10); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(-9, 0); ctx.lineTo(9, 0); ctx.stroke();
-  ctx.restore();
-  ctx.restore();
-
-  // Right arm (swinging axe)
-  var axeSwing = alive > 0 ? -1.15 - alive * 0.5 : -0.25 + 0.18 * Math.sin(t * 1.5);
-  ctx.save();
-  ctx.translate(bpx + 13, bpy - 25 + barbBob);
-  ctx.rotate(axeSwing);
-  // Arm
-  ctx.fillStyle = skinCol;
-  ctx.beginPath(); ctx.roundRect(-4, 0, 8, 18, 3); ctx.fill();
-  // Axe handle
-  ctx.strokeStyle = '#5a3010'; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(0, 8); ctx.lineTo(4, 30); ctx.stroke();
-  // Axe head (battle axe)
-  var axeCol = alive > 0 ? 'rgba(210,228,255,0.97)' : 'rgba(180,195,220,0.88)';
-  ctx.fillStyle = axeCol;
-  ctx.strokeStyle = '#5878a0'; ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.moveTo(-1, 0);
-  ctx.quadraticCurveTo(-20, -8, -18, 6);
-  ctx.quadraticCurveTo(-16, 18, -1, 14);
-  ctx.closePath();
-  ctx.fill(); ctx.stroke();
-  // Axe edge glint
-  ctx.strokeStyle = alive > 0 ? 'rgba(240,250,255,0.95)' : 'rgba(220,235,255,0.6)';
-  ctx.lineWidth = 1.2;
-  ctx.beginPath(); ctx.moveTo(-18, 0); ctx.lineTo(-10, 12); ctx.stroke();
-  if (alive > 0) {
-    ctx.strokeStyle = 'rgba(255,255,255,' + alive + ')';
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(-20, -2); ctx.lineTo(-12, 14); ctx.stroke();
-  }
-  ctx.restore();
-
-  // Head / helmet
-  ctx.fillStyle = '#6a7888';
-  ctx.beginPath(); ctx.ellipse(bpx, bpy - 35 + barbBob, 11, 12, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.strokeStyle = '#4a5868'; ctx.lineWidth = 1.3; ctx.stroke();
-  // Helmet nasal guard
-  ctx.fillStyle = '#788898';
-  ctx.beginPath(); ctx.roundRect(bpx - 2.5, bpy - 36 + barbBob, 5, 10, 1); ctx.fill();
-  // Helmet rim / brow bar
-  ctx.fillStyle = '#808e9e';
-  ctx.beginPath(); ctx.roundRect(bpx - 12, bpy - 28 + barbBob, 24, 4, 2); ctx.fill();
-  // Helmet cheek guards
-  ctx.fillStyle = '#6a7888';
-  ctx.beginPath(); ctx.roundRect(bpx - 12, bpy - 28 + barbBob, 5, 8, 1); ctx.fill();
-  ctx.beginPath(); ctx.roundRect(bpx + 7, bpy - 28 + barbBob, 5, 8, 1); ctx.fill();
-  // Eyes glow (fierce warrior)
-  var eyeAlpha = alive > 0 ? Math.min(1, 0.7 + alive * 0.5) : 0.5 + 0.15 * Math.sin(t * 2.5);
-  ctx.fillStyle = 'rgba(255,' + Math.round(80 + alive * 60) + ',0,' + eyeAlpha + ')';
-  ctx.beginPath(); ctx.ellipse(bpx - 4, bpy - 35 + barbBob, 2.5, 1.8, -0.1, 0, Math.PI * 2); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(bpx + 4, bpy - 35 + barbBob, 2.5, 1.8, 0.1, 0, Math.PI * 2); ctx.fill();
-  // Beard
-  ctx.strokeStyle = alive > 0 ? '#c88040' : '#9a6030';
-  ctx.lineWidth = 1.8; ctx.lineCap = 'round';
-  for (var bd = -3; bd <= 3; bd++) {
-    ctx.beginPath();
-    ctx.moveTo(bpx + bd * 1.8, bpy - 24 + barbBob);
-    ctx.quadraticCurveTo(bpx + bd * 2.2, bpy - 19 + barbBob, bpx + bd * 1.6 + (bd < 0 ? -1 : bd > 0 ? 1 : 0), bpy - 16 + barbBob);
-    ctx.stroke();
-  }
-
-  // ===== CLASH SPARKS (alive effect) =====
-  if (alive > 0) {
-    var clashX = (bpx + sx) / 2 + 5;
-    var clashY = (bpy + sy) / 2 - 22;
-    // Central flash
-    var cg = ctx.createRadialGradient(clashX, clashY, 0, clashX, clashY, 30 * alive);
-    cg.addColorStop(0, 'rgba(255,255,180,' + Math.min(1, alive * 0.9) + ')');
-    cg.addColorStop(0.4, 'rgba(255,160,20,' + (alive * 0.5) + ')');
-    cg.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.fillStyle = cg;
-    ctx.fillRect(clashX - 35, clashY - 35, 70, 70);
-    // Sparks
-    for (var sp = 0; sp < 10; sp++) {
-      var ang = (sp / 10) * Math.PI * 2 + t * 6;
-      var dist = (12 + sp * 4) * alive;
-      var spx = clashX + Math.cos(ang) * dist;
-      var spy = clashY + Math.sin(ang) * dist;
-      var spAlpha = Math.max(0, alive - sp * 0.06);
-      ctx.fillStyle = sp % 3 === 0 ? 'rgba(255,255,100,' + spAlpha + ')' :
-                      sp % 3 === 1 ? 'rgba(255,180,20,' + spAlpha + ')' :
-                                     'rgba(255,80,0,' + spAlpha + ')';
-      var spR = (2.5 - sp * 0.15) * alive;
-      if (spR > 0) { ctx.beginPath(); ctx.arc(spx, spy, spR, 0, Math.PI * 2); ctx.fill(); }
-    }
-    // Streak lines
-    ctx.lineCap = 'round';
-    for (var sl = 0; sl < 6; sl++) {
-      var slAng = (sl / 6) * Math.PI * 2 + 0.3;
-      var slLen = (8 + sl * 3) * alive;
-      ctx.strokeStyle = 'rgba(255,220,80,' + (alive * 0.7) + ')';
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(clashX, clashY);
-      ctx.lineTo(clashX + Math.cos(slAng) * slLen, clashY + Math.sin(slAng) * slLen);
-      ctx.stroke();
-    }
-  }
-
-  // Title bar at top
-  ctx.font = 'bold 11px "Courier New",monospace';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(160,20,20,0.85)';
-  ctx.fillText('\u2550\u2550\u2550 DUNGEON CRAWLER \u2550\u2550\u2550', W / 2, 13);
-
-  // Bottom gradient fade (for card overlay text)
-  var bf = ctx.createLinearGradient(0, H * 0.52, 0, H);
-  bf.addColorStop(0, 'rgba(5,0,13,0)');
-  bf.addColorStop(1, 'rgba(5,0,13,0.95)');
-  ctx.fillStyle = bf; ctx.fillRect(0, H * 0.52, W, H * 0.48);
-}
-
-// ===================== COVER ART — MYSTERY =====================
+// ===== MYSTERY COVERS =====
 function drawMysteryCover(canvas, variant) {
   var ctx = canvas.getContext('2d');
   var W = canvas.width, H = canvas.height, t = Date.now() / 1000;
   ctx.fillStyle = '#050508'; ctx.fillRect(0, 0, W, H);
-  var g = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, W * 0.7);
-  g.addColorStop(0, variant === 1 ? 'rgba(0,30,80,0.3)' : 'rgba(0,60,30,0.25)');
+  var g = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, W*0.7);
+  g.addColorStop(0, variant===1 ? 'rgba(0,30,80,0.3)' : 'rgba(0,60,30,0.25)');
   g.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   var pulse = 0.5 + 0.5 * Math.sin(t * 1.5);
   ctx.font = 'bold 72px "Courier New",monospace';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillStyle = 'rgba(80,80,100,' + (0.15 + pulse * 0.1) + ')';
-  ctx.fillText('?', W / 2, H / 2 - 10);
-  var bf = ctx.createLinearGradient(0, H * 0.5, 0, H);
+  ctx.fillText('?', W/2, H/2 - 10);
+  var bf = ctx.createLinearGradient(0, H*0.5, 0, H);
   bf.addColorStop(0, 'rgba(5,5,8,0)'); bf.addColorStop(1, 'rgba(5,5,8,0.95)');
-  ctx.fillStyle = bf; ctx.fillRect(0, H * 0.5, W, H * 0.5);
+  ctx.fillStyle = bf; ctx.fillRect(0, H*0.5, W, H*0.5);
 }
 
-// ===================== PĘTLA ANIMACJI =====================
 function renderFrame() {
-  if (dungeonAliveTimer > 0) dungeonAliveTimer--;
-  var aliveVal = dungeonAliveTimer / 65;
-  var c0 = document.getElementById('cover-0'); if (c0) drawDungeonCover(c0, aliveVal);
   var c1 = document.getElementById('cover-1'); if (c1) drawMysteryCover(c1, 1);
   var c2 = document.getElementById('cover-2'); if (c2) drawMysteryCover(c2, 2);
   requestAnimationFrame(renderFrame);
 }
 
-// ===================== INICJALIZACJA =====================
+// ===== INIT =====
 function init() {
   updateGalleryTransform();
   updateInfoPanel();
   updateDots();
   updateArrows();
-  setTimeout(function() {
-    document.getElementById('game-description').classList.add('visible');
-  }, 600);
+  setTimeout(function() { document.getElementById('game-description').classList.add('visible'); }, 600);
   renderFrame();
 }
-
 window.addEventListener('resize', updateGalleryTransform);
 window.addEventListener('load', init);
 </script>

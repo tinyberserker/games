@@ -120,9 +120,12 @@ function drawEntity(e) {
     return;
   }
   if (e.type === 'enemy') {
-    if      (e.name === 'Szkielet') drawSzkielet(cx, cy);
-    else if (e.name === 'Troll')    drawTroll(cx, cy);
-    else                            drawGoblin(cx, cy);
+    if      (e.name === 'Szkielet')   drawSzkielet(cx, cy);
+    else if (e.name === 'Troll')      drawTroll(cx, cy);
+    else if (e.name === 'Upiór')      drawUpior(cx, cy);
+    else if (e.name === 'Bazyliszek') drawBazyliszek(cx, cy);
+    else if (e.name === 'Rycerz')     drawRycerz(cx, cy);
+    else                              drawGoblin(cx, cy);
     return;
   }
   if (e.type === 'boss') {
@@ -1200,10 +1203,10 @@ function drawLegendSprites() {
       ctx.fillText('▒', cx, cy+1);
     }},
     { id:'leg-player',   fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawPlayerSprite(cx,cy); }},
-    { id:'leg-goblin',   fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawGoblin(cx,cy); }},
-    { id:'leg-szkielet', fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawSzkielet(cx,cy); }},
-    { id:'leg-troll',    fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawTroll(cx,cy); }},
-    { id:'leg-boss',     fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawBoss(cx,cy,'Demon'); }},
+    { id:'leg-goblin',   fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); if(currentWorld===2) drawUpior(cx,cy); else drawGoblin(cx,cy); }},
+    { id:'leg-szkielet', fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); if(currentWorld===2) drawBazyliszek(cx,cy); else drawSzkielet(cx,cy); }},
+    { id:'leg-troll',    fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); if(currentWorld===2) drawRycerz(cx,cy); else drawTroll(cx,cy); }},
+    { id:'leg-boss',     fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); if(currentWorld===2) drawBoss(cx,cy,'Cerber'); else drawBoss(cx,cy,'Demon'); }},
     { id:'leg-stairs',   fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawStairs(cx,cy); }},
     { id:'leg-gold',     fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawGoldBag(cx,cy); }},
     { id:'leg-potion',   fn:(cx,cy) => { ctx.fillStyle='#08080f'; ctx.fillRect(0,0,S,S); drawPotion(cx,cy); }},

@@ -220,7 +220,7 @@ function applyLang() {
 
 // ===================== STAŁE =====================
 const TILE  = 20;
-const HUD   = 130;
+let HUD = 130;
 const FLOORS = 6;
 const FOG_RADIUS = 4;
 
@@ -298,6 +298,7 @@ function applyWorldSettings(world) {
   currentWorld = world;
   COLS = (world === 2) ? 18 : 14;
   ROWS = (world === 2) ? 26 : 20;
+  HUD  = (world === 2) ? 200 : 130;
   W    = COLS * TILE;
   H    = ROWS * TILE;
   canvas.width  = W;

@@ -78,6 +78,16 @@ canvas.addEventListener('click', e => {
 });
 
 document.addEventListener('keydown', e => {
+  // === DEBUG: przełączanie pięter i światów (tymczasowe) ===
+  if (e.shiftKey) {
+    if (e.code==='Digit7') { e.preventDefault(); currentWorld=1; applyWorldSettings(1); initGame(); return; }
+    if (e.code==='Digit8') { e.preventDefault(); currentWorld=2; applyWorldSettings(2); initGame(); return; }
+    if (game.state==='playing') {
+      const f = {'Digit1':1,'Digit2':2,'Digit3':3,'Digit4':4,'Digit5':5,'Digit6':6}[e.code];
+      if (f) { e.preventDefault(); game.floor=f; loadFloor(); return; }
+    }
+  }
+  // === KONIEC DEBUG ===
   if (e.ctrlKey && e.key.toLowerCase()==='r') { e.preventDefault(); showTitle(); return; }
   if (game.state === 'lang') {
     if (e.key === 'p' || e.key === 'P') { lang = 'pl'; applyLang(); game.state = 'mode'; return; }
@@ -121,16 +131,6 @@ document.addEventListener('keydown', e => {
     if (idx>=0 && idx<(game.abilityChoices||[]).length) { applyAbility(game.abilityChoices[idx]); updateTouchUI(); }
     return;
   }
-  // === DEBUG: przełączanie pięter i światów (tymczasowe) ===
-  if (e.shiftKey && (game.state==='playing'||game.state==='title')) {
-    if (e.code==='Digit7') { currentWorld=1; applyWorldSettings(1); initGame(); return; }
-    if (e.code==='Digit8') { currentWorld=2; applyWorldSettings(2); initGame(); return; }
-  }
-  if (e.shiftKey && game.state==='playing') {
-    const f = {'Digit1':1,'Digit2':2,'Digit3':3,'Digit4':4,'Digit5':5,'Digit6':6}[e.code];
-    if (f) { game.floor=f; loadFloor(); return; }
-  }
-  // === KONIEC DEBUG ===
   if (game.state==='playing') {
     if (e.key==='l'||e.key==='L') { game.showScores = !game.showScores; return; }
     if (game.showScores && e.key==='Escape') { game.showScores = false; return; }

@@ -343,6 +343,11 @@ function drawPlayer() {
 function drawHUD() {
   const p = game.player;
   const hy = H;
+  // Skalowanie fontów proporcjonalne do szerokości canvas (W2=360 vs W1=280)
+  // Pozycje Y zostają bez zmian żeby zmieścić się w 130px HUD
+  const hf = Math.max(1, W / 280);
+  const fs  = n => `${Math.round(n * hf)}px Courier New`;
+  const fsB = n => `bold ${Math.round(n * hf)}px Courier New`;
 
   ctx.fillStyle = '#0d0820';
   ctx.fillRect(0, hy, W, HUD);
@@ -352,13 +357,19 @@ function drawHUD() {
 
   // Tytuł
   ctx.fillStyle = '#ffd700';
-  ctx.font = 'bold 12px Courier New';
+  ctx.font = fsB(12);
   ctx.textAlign = 'center';
   ctx.fillText(t('hud_title'), W/2, hy+13);
 
-  // Serca
-  ctx.font = '13px Arial';
+  // Przycisk wyników [L]
+  ctx.textAlign = 'right';
+  ctx.font = fs(8);
+  ctx.fillStyle = '#444';
+  ctx.fillText(lang==='pl' ? '[L] wyniki' : '[L] scores', W-4, hy+13);
   ctx.textAlign = 'left';
+
+  // Serca
+  ctx.font = `${Math.round(13*hf)}px Arial`;
   let hearts = '';
   for (let i=0; i<game.lives; i++) hearts += '♥ ';
   ctx.fillStyle = '#ff4444';
@@ -371,7 +382,7 @@ function drawHUD() {
   ctx.fillStyle = '#222'; ctx.fillRect(4, hy+31, barW, barH);
   ctx.fillStyle = hpCol;  ctx.fillRect(4, hy+31, hpW, barH);
   ctx.fillStyle = '#fff';
-  ctx.font = '9px Courier New';
+  ctx.font = fs(9);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(`HP ${p.hp}/${p.maxHp}`, W/2, hy+35);
@@ -379,7 +390,7 @@ function drawHUD() {
 
   // Statystyki
   ctx.textAlign = 'left';
-  ctx.font = '11px Courier New';
+  ctx.font = fs(11);
   ctx.fillStyle = '#ffd700';
   ctx.fillText(t('hud_gold', p.gold), 4, hy+52);
   ctx.fillStyle = '#00ffff';
@@ -392,7 +403,7 @@ function drawHUD() {
   // Licznik wrogów
   const enemiesLeft = game.entities.filter(e => (e.type==='enemy'||e.type==='boss') && !e.dying).length;
   ctx.textAlign = 'right';
-  ctx.font = '10px Courier New';
+  ctx.font = fs(10);
   ctx.fillStyle = enemiesLeft === 0 ? '#00ff88' : '#ff4444';
   ctx.fillText(
     enemiesLeft === 0
@@ -402,19 +413,12 @@ function drawHUD() {
   );
   ctx.textAlign = 'left';
 
-  // Przycisk wyników [L]
-  ctx.textAlign = 'right';
-  ctx.font = '8px Courier New';
-  ctx.fillStyle = '#444';
-  ctx.fillText(lang==='pl' ? '[L] wyniki' : '[L] scores', W-4, hy+13);
-  ctx.textAlign = 'left';
-
   // Wiadomości
   for (let i=0; i<Math.min(game.messages.length,3); i++) {
     const m = game.messages[i];
     ctx.globalAlpha = i===0?1:i===1?0.5:0.22;
     ctx.fillStyle = m.color;
-    ctx.font = (i===0?'bold ':'')+'9px Courier New';
+    ctx.font = i===0 ? fsB(9) : fs(9);
     ctx.fillText(m.text, 4, hy+93+i*12);
   }
   ctx.globalAlpha = 1;

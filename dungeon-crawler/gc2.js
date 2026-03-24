@@ -79,7 +79,7 @@ canvas.addEventListener('click', e => {
 
 document.addEventListener('keydown', e => {
   // === DEBUG: przełączanie pięter i światów (tymczasowe) ===
-  if (e.shiftKey) {
+  if (e.ctrlKey) {
     if (e.code==='Digit7') { e.preventDefault(); currentWorld=1; applyWorldSettings(1); initGame(); return; }
     if (e.code==='Digit8') { e.preventDefault(); currentWorld=2; applyWorldSettings(2); initGame(); return; }
     if (game.state==='playing') {

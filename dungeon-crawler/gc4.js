@@ -343,11 +343,14 @@ function drawPlayer() {
 function drawHUD() {
   const p = game.player;
   const hy = H;
-  // Skalowanie fontów proporcjonalne do szerokości canvas (W2=360 vs W1=280)
-  // Pozycje Y zostają bez zmian żeby zmieścić się w 130px HUD
-  const hf = Math.max(1, W / 280);
+  // hf skaluje fonty i pozycje proporcjonalnie do wysokości HUD
+  // W1: HUD=130 → hf=1.0 | W2: HUD=200 → hf≈1.54
+  const hf = HUD / 130;
+  const y  = n => hy + Math.round(n * hf);
   const fs  = n => `${Math.round(n * hf)}px Courier New`;
   const fsB = n => `bold ${Math.round(n * hf)}px Courier New`;
+  const pad = Math.round(4 * hf);
+  const barH = Math.round(8 * hf);
 
   ctx.fillStyle = '#0d0820';
   ctx.fillRect(0, hy, W, HUD);
@@ -359,13 +362,13 @@ function drawHUD() {
   ctx.fillStyle = '#ffd700';
   ctx.font = fsB(12);
   ctx.textAlign = 'center';
-  ctx.fillText(t('hud_title'), W/2, hy+13);
+  ctx.fillText(t('hud_title'), W/2, y(13));
 
   // Przycisk wyników [L]
   ctx.textAlign = 'right';
   ctx.font = fs(8);
   ctx.fillStyle = '#444';
-  ctx.fillText(lang==='pl' ? '[L] wyniki' : '[L] scores', W-4, hy+13);
+  ctx.fillText(lang==='pl' ? '[L] wyniki' : '[L] scores', W-pad, y(13));
   ctx.textAlign = 'left';
 
   // Serca
@@ -373,32 +376,33 @@ function drawHUD() {
   let hearts = '';
   for (let i=0; i<game.lives; i++) hearts += '♥ ';
   ctx.fillStyle = '#ff4444';
-  ctx.fillText(hearts, 4, hy+27);
+  ctx.fillText(hearts, pad, y(27));
 
   // HP bar
-  const barW = W-8, barH = 8;
+  const barW = W - pad*2;
+  const barY = y(31);
   const hpW = Math.floor(barW * p.hp / p.maxHp);
   const hpCol = p.hp > p.maxHp*0.5 ? '#00cc44' : p.hp > p.maxHp*0.25 ? '#ffaa00' : '#ff2222';
-  ctx.fillStyle = '#222'; ctx.fillRect(4, hy+31, barW, barH);
-  ctx.fillStyle = hpCol;  ctx.fillRect(4, hy+31, hpW, barH);
+  ctx.fillStyle = '#222'; ctx.fillRect(pad, barY, barW, barH);
+  ctx.fillStyle = hpCol;  ctx.fillRect(pad, barY, hpW, barH);
   ctx.fillStyle = '#fff';
   ctx.font = fs(9);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(`HP ${p.hp}/${p.maxHp}`, W/2, hy+35);
+  ctx.fillText(`HP ${p.hp}/${p.maxHp}`, W/2, barY + barH/2);
   ctx.textBaseline = 'alphabetic';
 
   // Statystyki
   ctx.textAlign = 'left';
   ctx.font = fs(11);
   ctx.fillStyle = '#ffd700';
-  ctx.fillText(t('hud_gold', p.gold), 4, hy+52);
+  ctx.fillText(t('hud_gold', p.gold), pad, y(52));
   ctx.fillStyle = '#00ffff';
-  ctx.fillText(`XP:${p.xp} Lv:${p.level} ATK:${p.atk}${p.shield ? t('hud_shield',p.shield) : ''}`, 4, hy+65);
+  ctx.fillText(`XP:${p.xp} Lv:${p.level} ATK:${p.atk}${p.shield ? t('hud_shield',p.shield) : ''}`, pad, y(65));
   ctx.fillStyle = '#ff8844';
-  ctx.fillText(t('hud_kills', game.killCount), 4, hy+78);
+  ctx.fillText(t('hud_kills', game.killCount), pad, y(78));
   ctx.fillStyle = '#00ffff';
-  ctx.fillText(t('hud_potions', p.potions), 90, hy+78);
+  ctx.fillText(t('hud_potions', p.potions), Math.round(90*hf), y(78));
 
   // Licznik wrogów
   const enemiesLeft = game.entities.filter(e => (e.type==='enemy'||e.type==='boss') && !e.dying).length;
@@ -409,17 +413,18 @@ function drawHUD() {
     enemiesLeft === 0
       ? (lang==='pl' ? '✓ brak wrogów' : '✓ no enemies')
       : (lang==='pl' ? `wrogów: ${enemiesLeft}` : `enemies: ${enemiesLeft}`),
-    W-4, hy+78
+    W - pad, y(78)
   );
   ctx.textAlign = 'left';
 
   // Wiadomości
+  const msgStep = Math.round(13 * hf);
   for (let i=0; i<Math.min(game.messages.length,3); i++) {
     const m = game.messages[i];
     ctx.globalAlpha = i===0?1:i===1?0.5:0.22;
     ctx.fillStyle = m.color;
     ctx.font = i===0 ? fsB(9) : fs(9);
-    ctx.fillText(m.text, 4, hy+93+i*12);
+    ctx.fillText(m.text, pad, y(93) + i*msgStep);
   }
   ctx.globalAlpha = 1;
 }

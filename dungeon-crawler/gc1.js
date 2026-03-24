@@ -396,13 +396,33 @@ function initGame() {
     if (nameEl) nameEl.textContent = 'B ' + bNames[i-1];
     if (statEls[1]) statEls[1].textContent = bStats[i-1];
   }
-  // Legenda — etykiety tekstowe zależne od świata
+  // Legenda — etykiety tekstowe zależne od świata (prawy panel)
   const legMap = currentWorld === 2
     ? { leg_goblin:'Upiór', leg_szkielet:'Bazyliszek', leg_troll:'Rycerz' }
     : { leg_goblin: t('leg_goblin'), leg_szkielet: t('leg_szkielet'), leg_troll: t('leg_troll') };
   for (const [key, val] of Object.entries(legMap)) {
     const span = document.querySelector(`[data-i18n="${key}"]`);
     if (span) span.textContent = val;
+  }
+  // Lewy panel — lista wrogów zależna od świata
+  const enemyPanelData = currentWorld === 2
+    ? [
+        { key:'enemy_goblin',   name:'u Upiór',      stats:'HP:35  ATK:9  XP:25  \uD83D\uDCB0 12'},
+        { key:'enemy_szkielet', name:'b Bazyliszek',  stats:'HP:50  ATK:14 XP:35  \uD83D\uDCB0 18'},
+        { key:'enemy_troll',    name:'r Rycerz',      stats:'HP:70  ATK:18 XP:50  \uD83D\uDCB0 25'},
+      ]
+    : [
+        { key:'enemy_goblin',   name: t('enemy_goblin'),   stats:'HP:15  ATK:4  XP:10  \uD83D\uDCB0 5'},
+        { key:'enemy_szkielet', name: t('enemy_szkielet'), stats:'HP:20  ATK:6  XP:15  \uD83D\uDCB0 8'},
+        { key:'enemy_troll',    name: t('enemy_troll'),    stats:'HP:35  ATK:10 XP:25  \uD83D\uDCB0 15'},
+      ];
+  for (const {key, name, stats} of enemyPanelData) {
+    const nameEl = document.querySelector(`[data-i18n="${key}"]`);
+    if (nameEl) {
+      nameEl.textContent = name;
+      const statEl = nameEl.parentElement.querySelector('.stat');
+      if (statEl) statEl.textContent = stats;
+    }
   }
   loadFloor();
   if (typeof drawLegendSprites === 'function') drawLegendSprites();

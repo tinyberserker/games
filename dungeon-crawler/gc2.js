@@ -122,12 +122,13 @@ document.addEventListener('keydown', e => {
     return;
   }
   // === DEBUG: przełączanie pięter i światów (tymczasowe) ===
+  // Shift+1..6 = piętro, Shift+7 = Świat 1, Shift+8 = Świat 2
   if (game.state==='playing'||game.state==='title') {
-    if (e.key==='F7') { currentWorld=1; applyWorldSettings(1); initGame(); return; }
-    if (e.key==='F8') { currentWorld=2; applyWorldSettings(2); initGame(); return; }
+    if (e.key==='&') { currentWorld=1; applyWorldSettings(1); initGame(); return; }
+    if (e.key==='*') { currentWorld=2; applyWorldSettings(2); initGame(); return; }
   }
   if (game.state==='playing') {
-    const floorKey = {'F1':1,'F2':2,'F3':3,'F4':4,'F5':5,'F6':6}[e.key];
+    const floorKey = {'!':1,'@':2,'#':3,'$':4,'%':5,'^':6}[e.key];
     if (floorKey) { game.floor=floorKey; loadFloor(); return; }
   }
   // === KONIEC DEBUG ===

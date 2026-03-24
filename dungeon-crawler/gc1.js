@@ -367,9 +367,26 @@ function initGame() {
   };
   for (let i=1; i<=6; i++) {
     const el = document.getElementById(`boss-panel-${i}`);
-    if (el) el.classList.remove('boss-defeated');
+    if (!el) continue;
+    el.classList.remove('boss-defeated');
+    if (currentWorld === 2) {
+      const w2Names = ['Cerber','Hydra','Gorgona','Feniks','Lewiatan','Śmierć'];
+      const w2Stats = [
+        'HP:130 ATK:25 XP:90  💰70',
+        'HP:180 ATK:32 XP:120 💰95',
+        'HP:240 ATK:40 XP:150 💰130',
+        'HP:310 ATK:48 XP:185 💰165',
+        'HP:390 ATK:57 XP:225 💰200',
+        'HP:500 ATK:70 XP:280 💰250',
+      ];
+      const nameEl = el.querySelector('.boss-name');
+      const statEls = el.querySelectorAll('.stat');
+      if (nameEl) nameEl.textContent = 'B ' + w2Names[i-1];
+      if (statEls[1]) statEls[1].textContent = w2Stats[i-1];
+    }
   }
   loadFloor();
+  if (typeof drawLegendSprites === 'function') drawLegendSprites();
 }
 
 // ===================== MAPA =====================
@@ -557,7 +574,10 @@ function loadSavedGame() {
       game = saved;
       game.state = 'playing';
       difficulty = game.difficulty || 2;
+      currentWorld = game.world || 1;
+      applyWorldSettings(currentWorld);
       updateBossPanel();
+      if (typeof drawLegendSprites === 'function') drawLegendSprites();
       return true;
     }
   } catch(e) {}
@@ -620,7 +640,8 @@ function loadFloor() {
   game.player.y = 1;
   game.visited = Array.from({length: ROWS}, () => new Array(COLS).fill(false));
   updateFog();
-  const boss = BOSSES[game.floor-1];
+  const bossList = (currentWorld === 2) ? W2_BOSSES : BOSSES;
+  const boss = bossList[game.floor-1];
   game.bossAnnounceName = boss.name;
   game.bossAnnounceTimer = 100;
   game.fadeTimer = 18;

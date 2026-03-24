@@ -273,6 +273,22 @@ function unlockWorld2() {
   try { localStorage.setItem('dc_w2_unlocked', '1'); } catch(e) {}
 }
 
+// Dopasowuje CSS canvas do okna (zachowuje wewnętrzną rozdzielczość)
+function fitCanvasToViewport() {
+  const maxH = Math.max(window.innerHeight - 80, 300);
+  const maxW = Math.max(window.innerWidth - 440, 200);
+  const scaleH = maxH / (H + HUD);
+  const scaleW = maxW / W;
+  const scale  = Math.min(1, scaleH, scaleW);
+  if (scale < 1) {
+    canvas.style.width  = Math.round(W * scale) + 'px';
+    canvas.style.height = Math.round((H + HUD) * scale) + 'px';
+  } else {
+    canvas.style.width  = '';
+    canvas.style.height = '';
+  }
+}
+
 // Ustawia wymiary mapy i canvas zgodnie ze światem
 function applyWorldSettings(world) {
   currentWorld = world;
@@ -282,7 +298,10 @@ function applyWorldSettings(world) {
   H    = ROWS * TILE;
   canvas.width  = W;
   canvas.height = H + HUD;
+  fitCanvasToViewport();
 }
+
+window.addEventListener('resize', fitCanvasToViewport);
 
 // ===================== STAN GRY =====================
 let game = {};

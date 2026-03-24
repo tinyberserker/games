@@ -366,25 +366,43 @@ function initGame() {
     showScores: false,
     difficulty: difficulty,
   };
+  // Boss panel — nazwy i statystyki zależne od świata
+  const w1Names = ['Smok','Demon','Lich','Wampir','Golem','Mroczny Bóg'];
+  const w1Stats = [
+    'HP:60  ATK:15 XP:50  💰40',
+    'HP:80  ATK:20 XP:75  💰60',
+    'HP:120 ATK:25 XP:100 💰100',
+    'HP:160 ATK:30 XP:130 💰130',
+    'HP:200 ATK:35 XP:160 💰160',
+    'HP:260 ATK:45 XP:200 💰200',
+  ];
+  const w2Names = ['Cerber','Hydra','Gorgona','Feniks','Lewiatan','Śmierć'];
+  const w2Stats = [
+    'HP:130 ATK:25 XP:90  💰70',
+    'HP:180 ATK:32 XP:120 💰95',
+    'HP:240 ATK:40 XP:150 💰130',
+    'HP:310 ATK:48 XP:185 💰165',
+    'HP:390 ATK:57 XP:225 💰200',
+    'HP:500 ATK:70 XP:280 💰250',
+  ];
+  const bNames = currentWorld === 2 ? w2Names : w1Names;
+  const bStats = currentWorld === 2 ? w2Stats : w1Stats;
   for (let i=1; i<=6; i++) {
     const el = document.getElementById(`boss-panel-${i}`);
     if (!el) continue;
     el.classList.remove('boss-defeated');
-    if (currentWorld === 2) {
-      const w2Names = ['Cerber','Hydra','Gorgona','Feniks','Lewiatan','Śmierć'];
-      const w2Stats = [
-        'HP:130 ATK:25 XP:90  💰70',
-        'HP:180 ATK:32 XP:120 💰95',
-        'HP:240 ATK:40 XP:150 💰130',
-        'HP:310 ATK:48 XP:185 💰165',
-        'HP:390 ATK:57 XP:225 💰200',
-        'HP:500 ATK:70 XP:280 💰250',
-      ];
-      const nameEl = el.querySelector('.boss-name');
-      const statEls = el.querySelectorAll('.stat');
-      if (nameEl) nameEl.textContent = 'B ' + w2Names[i-1];
-      if (statEls[1]) statEls[1].textContent = w2Stats[i-1];
-    }
+    const nameEl = el.querySelector('.boss-name');
+    const statEls = el.querySelectorAll('.stat');
+    if (nameEl) nameEl.textContent = 'B ' + bNames[i-1];
+    if (statEls[1]) statEls[1].textContent = bStats[i-1];
+  }
+  // Legenda — etykiety tekstowe zależne od świata
+  const legMap = currentWorld === 2
+    ? { leg_goblin:'Upiór', leg_szkielet:'Bazyliszek', leg_troll:'Rycerz' }
+    : { leg_goblin: t('leg_goblin'), leg_szkielet: t('leg_szkielet'), leg_troll: t('leg_troll') };
+  for (const [key, val] of Object.entries(legMap)) {
+    const span = document.querySelector(`[data-i18n="${key}"]`);
+    if (span) span.textContent = val;
   }
   loadFloor();
   if (typeof drawLegendSprites === 'function') drawLegendSprites();

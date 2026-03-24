@@ -68,14 +68,12 @@ canvas.addEventListener('click', e => {
       canvas.style.cursor = 'default';
       game.state = 'title';
     }
-  } else if (game.state === 'world_select') {
-    const {x, y} = getCanvasPos(e);
-    const bw = 200, bh = 48;
-    const w1y = H/2 - 34, w2y = H/2 + 26;
-    if (y >= w1y && y <= w1y+bh) { currentWorld=1; game.state='title'; }
-    else if (y >= w2y && y <= w2y+bh && isWorld2Unlocked()) { currentWorld=2; game.state='title'; }
   } else if (game.state === 'world_complete') {
-    game.state = 'world_select';
+    const {x, y} = getCanvasPos(e);
+    const bw = 200, bh = 30;
+    const yesY = H/2 + 22, noY = H/2 + 62;
+    if (y >= yesY && y <= yesY+bh) { currentWorld=2; applyWorldSettings(2); game.state='title'; }
+    else if (y >= noY && y <= noY+bh) { currentWorld=1; applyWorldSettings(1); showTitle(); }
   }
 });
 
@@ -111,13 +109,10 @@ document.addEventListener('keydown', e => {
   if (game.state==='dead') { if (e.key==='r'||e.key==='R') initGame(); return; }
   if (game.state==='victory') { if (e.key==='r'||e.key==='R') { currentWorld=1; initGame(); } return; }
   if (game.state==='world_complete') {
-    if (e.key==='Enter') { game.state='world_select'; return; }
-    if (e.key==='r'||e.key==='R') { currentWorld=1; initGame(); return; }
-    return;
-  }
-  if (game.state==='world_select') {
-    if (e.key==='1') { currentWorld=1; game.state='title'; return; }
-    if ((e.key==='2') && isWorld2Unlocked()) { currentWorld=2; game.state='title'; return; }
+    if (e.key==='t'||e.key==='T'||e.key==='y'||e.key==='Y'||e.key==='Enter') {
+      currentWorld=2; applyWorldSettings(2); game.state='title'; return;
+    }
+    if (e.key==='n'||e.key==='N') { currentWorld=1; applyWorldSettings(1); showTitle(); return; }
     return;
   }
   if (game.state==='shop') { buyItem(e.key); return; }

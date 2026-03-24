@@ -916,27 +916,50 @@ function drawWorldComplete() {
   ctx.globalAlpha = 1;
 
   // Tytuł
-  const gr = ctx.createLinearGradient(0, H/2-70, 0, H/2-30);
+  const gr = ctx.createLinearGradient(0, H/2-80, 0, H/2-50);
   gr.addColorStop(0,'#ffd700'); gr.addColorStop(1,'#ffaa00');
   ctx.fillStyle = gr;
   ctx.font = 'bold 12px Courier New';
-  ctx.fillText(t('world1_complete_title'), W/2, H/2-46);
+  ctx.fillText(t('world1_complete_title'), W/2, H/2-58);
 
   ctx.fillStyle = '#00ff88';
   ctx.font = '9px Courier New';
-  ctx.fillText(t('world1_complete_sub'), W/2, H/2-18);
+  ctx.fillText(t('world1_complete_sub'), W/2, H/2-38);
 
   // Statystyki gracza
   if (game.player) {
     const p = game.player;
     ctx.fillStyle = '#aaa';
     ctx.font = '9px Courier New';
-    ctx.fillText(`Lv${p.level}  ${p.gold} zł  ${game.killCount} kills`, W/2, H/2+4);
+    ctx.fillText(`Lv${p.level}  ${p.gold} zł  ${game.killCount} kills`, W/2, H/2-22);
   }
 
-  ctx.fillStyle = '#555';
-  ctx.font = '8px Courier New';
-  ctx.fillText(t('world1_complete_next'), W/2, H/2+28);
+  // Pytanie
+  const p2 = Math.sin(now * 2) * 0.5 + 0.5;
+  ctx.fillStyle = `rgba(255,${Math.floor(180+p2*75)},0,1)`;
+  ctx.font = 'bold 11px Courier New';
+  ctx.fillText(t('world2_ask'), W/2, H/2+4);
+
+  // Przycisk TAK
+  const bw = 200, bh = 30;
+  const yesY = H/2 + 22;
+  ctx.fillStyle = '#0a1a0a';
+  ctx.fillRect(W/2 - bw/2, yesY, bw, bh);
+  ctx.strokeStyle = '#00ff88'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(W/2 - bw/2, yesY, bw, bh);
+  ctx.fillStyle = '#00ff88';
+  ctx.font = 'bold 10px Courier New';
+  ctx.fillText(t('world2_yes'), W/2, yesY + 19);
+
+  // Przycisk NIE
+  const noY = H/2 + 62;
+  ctx.fillStyle = '#1a0a0a';
+  ctx.fillRect(W/2 - bw/2, noY, bw, bh);
+  ctx.strokeStyle = '#ff4444'; ctx.lineWidth = 1.5;
+  ctx.strokeRect(W/2 - bw/2, noY, bw, bh);
+  ctx.fillStyle = '#ff4444';
+  ctx.font = 'bold 10px Courier New';
+  ctx.fillText(t('world2_no'), W/2, noY + 19);
 }
 
 function drawTitle() {
@@ -1078,11 +1101,6 @@ function draw() {
   }
   if (game.state === 'ability_pick') {
     drawAbilityPick();
-    requestAnimationFrame(draw);
-    return;
-  }
-  if (game.state === 'world_select') {
-    drawWorldSelect();
     requestAnimationFrame(draw);
     return;
   }
@@ -1342,13 +1360,12 @@ canvas.addEventListener('touchend', e => {
   // Ekran śmierci/zwycięstwa — tap = restart
   if (game.state === 'dead') { initGame(); return; }
   if (game.state === 'victory') { currentWorld=1; initGame(); return; }
-  if (game.state === 'world_complete') { game.state = 'world_select'; return; }
-  if (game.state === 'world_select') {
+  if (game.state === 'world_complete') {
     const {x, y} = getCanvasPos(e.changedTouches[0]);
-    const bw = 200, bh = 48;
-    const w1y = H/2 - 34, w2y = H/2 + 26;
-    if (y >= w1y && y <= w1y+bh) { currentWorld=1; game.state='title'; return; }
-    if (y >= w2y && y <= w2y+bh && isWorld2Unlocked()) { currentWorld=2; game.state='title'; return; }
+    const bw = 200, bh = 30;
+    const yesY = H/2 + 22, noY = H/2 + 62;
+    if (y >= yesY && y <= yesY+bh) { currentWorld=2; applyWorldSettings(2); game.state='title'; return; }
+    if (y >= noY  && y <= noY+bh)  { currentWorld=1; applyWorldSettings(1); showTitle(); return; }
     return;
   }
   // Swipe do ruchu
